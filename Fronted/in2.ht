@@ -499,7 +499,7 @@
             background: white;
             border-radius: 15px;
             padding: 20px;
-            height: 800px;
+            height: 600px;
             box-shadow: 0 5px 15px rgba(0, 0, 0, 0.05);
             border: 1px solid #e0e0e0;
         }
@@ -834,79 +834,6 @@
             left: -400px;
         }
 
-        .confirmation-modal {
-            display: none;
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background-color: rgba(0, 0, 0, 0.5);
-            justify-content: center;
-            align-items: center;
-            z-index: 1000;
-        }
-
-        .confirmation-modal-content {
-            background: white;
-            padding: 25px;
-            border-radius: 15px;
-            width: 90%;
-            max-width: 400px;
-            text-align: center;
-            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
-            position: relative;
-        }
-
-        .confirmation-modal-content h2 {
-            color: #2c3e50;
-            font-size: 1.5rem;
-            margin-bottom: 15px;
-        }
-
-        .confirmation-modal-content p {
-            color: #2c3e50;
-            font-size: 1rem;
-            margin-bottom: 20px;
-        }
-
-        .confirmation-modal-buttons {
-            display: flex;
-            justify-content: center;
-            gap: 15px;
-        }
-
-        .confirmation-modal-buttons button {
-            padding: 10px 20px;
-            border: none;
-            border-radius: 8px;
-            font-size: 1rem;
-            cursor: pointer;
-            transition: all 0.3s ease;
-        }
-
-        .confirm-btn {
-            background: linear-gradient(135deg, #6a11cb, #2575fc);
-            color: white;
-            font-weight: 500;
-        }
-
-        .confirm-btn:hover {
-            opacity: 0.9;
-            transform: translateY(-2px);
-        }
-
-        .cancel-btn {
-            background: #e0e0e0;
-            color: #2c3e50;
-            font-weight: 500;
-        }
-
-        .cancel-btn:hover {
-            background: #d0d0d0;
-            transform: translateY(-2px);
-        }
-
         @media (max-width: 1200px) {
             .page-container {
                 flex-direction: column;
@@ -1055,17 +982,16 @@
 
                 <div class="form-group">
                     <label for="emp-id">Employee ID:</label>
-                    <input type="text" id="emp-id" name="emp-id" placeholder="Enter your Employee ID" required minlength="7" maxlength="7" 
-                           pattern="^[ATS]{3}0(?!000)[0-9]{3}$"
-                           title="Please enter a valid Employee ID (ATS0 followed by 3 digits, not all zeros)">
+                    <input type="text" id="emp-id" name="emp-id" placeholder="Enter your Employee ID" required minlength="7" maxlength="7" pattern="^[A-Z]{3}0[0-9]{3}$"
+                           title="Employee ID should be in the format: 3 uppercase letters followed by 4 digits">
                     <p id="error-message-emp-id" class="error-message"></p>
                 </div>
 
                 <div class="form-group">
                     <label for="email">Email Address:</label>
                     <input id="email" type="email" placeholder="Enter your Email ID" required minlength="8" maxlength="50"
-                           pattern="^[a-zA-Z][a-zA-Z0-9._-]{1,}[a-zA-Z]@(?:gmail\.com|outlook\.com|[\w-]+\.(?:co|in|org))$"
-                           title="Email must start with a letter, end with a letter, and have a domain of gmail.com, outlook.com, or *.co/in/org">
+                           pattern="^[a-zA-Z0-9._%+\-]+@[a-zA-Z]{2,15}\.[a-zA-Z]{2,3}$"
+                           title="Please enter a valid email address">
                     <p id="error-message-email" class="error-message"></p>
                 </div>
 
@@ -1174,17 +1100,6 @@
                 <div class="all-leaves-grid" id="all-leaves-container"></div>
             </div>
         </div>
-
-        <div id="confirmation-modal" class="confirmation-modal">
-            <div class="confirmation-modal-content">
-                <h2>Confirm Leave Submission</h2>
-                <p>Are you sure you want to submit this leave request?</p>
-                <div class="confirmation-modal-buttons">
-                    <button class="confirm-btn" id="confirm-submit">Confirm</button>
-                    <button class="cancel-btn" id="cancel-submit">Cancel</button>
-                </div>
-            </div>
-        </div>
     </div>
 
     <div id="popup-card" class="popup-card">
@@ -1197,7 +1112,6 @@
         let currentYear = new Date().getFullYear();
         let cachedLeaves = []; // Cache for leave data
         let lastEmpId = null; // Track last fetched empId
-        let pendingLeaveDetails = null; // Store leave details temporarily
 
         // Debounce utility
         function debounce(func, wait) {
@@ -1290,13 +1204,12 @@
             fromDateInput.addEventListener('change', toggleHourSelection);
             toDateInput.addEventListener('change', toggleHourSelection);
 
-            // Form submission with confirmation modal
+            // Form submission
             document.getElementById('leave-form').addEventListener('submit', function (event) {
                 event.preventDefault();
                 if (!validateForm()) return;
 
-                // Store leave details
-                pendingLeaveDetails = {
+                const leaveDetails = {
                     name: document.getElementById('name').value,
                     emp_id: document.getElementById('emp-id').value,
                     email: document.getElementById('email').value,
@@ -1308,21 +1221,29 @@
                     reason: document.getElementById('reason').value
                 };
 
-                // Show confirmation modal
-                document.getElementById('confirmation-modal').style.display = 'flex';
-            });
-
-            // Confirmation modal buttons
-            document.getElementById('confirm-submit').addEventListener('click', function () {
-                document.getElementById('confirmation-modal').style.display = 'none';
-                if (pendingLeaveDetails) {
-                    submitLeaveRequest(pendingLeaveDetails);
-                }
-            });
-
-            document.getElementById('cancel-submit').addEventListener('click', function () {
-                document.getElementById('confirmation-modal').style.display = 'none';
-                pendingLeaveDetails = null;
+                fetch(`${API_BASE_URL}/api/leaves`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(leaveDetails)
+                })
+                    .then(response => {
+                        if (!response.ok) {
+                            return response.json().then(err => { throw new Error(err.error || 'Unknown server error'); });
+                        }
+                        return response.json();
+                    })
+                    .then(() => {
+                        showPopup('Leave request submitted successfully', true);
+                        document.getElementById('leave-form').reset();
+                        hourSelection.forEach(el => el.style.display = 'none');
+                        cachedLeaves = []; // Clear cache to force refresh
+                        fetchAndUpdateLeaves();
+                        updateLeaveStats();
+                    })
+                    .catch(error => {
+                        console.error('Error submitting leave:', error);
+                        showPopup(error.message || 'Error submitting leave request', false);
+                    });
             });
 
             // Modal close functionality for details modal
@@ -1335,10 +1256,6 @@
             window.addEventListener('click', function (event) {
                 if (event.target === document.getElementById('modal')) {
                     document.getElementById('modal').style.display = 'none';
-                }
-                if (event.target === document.getElementById('confirmation-modal')) {
-                    document.getElementById('confirmation-modal').style.display = 'none';
-                    pendingLeaveDetails = null;
                 }
             });
 
@@ -1356,34 +1273,6 @@
                     document.getElementById('all-leaves-modal').style.display = 'none';
                 }
             });
-        }
-
-        function submitLeaveRequest(leaveDetails) {
-            fetch(`${API_BASE_URL}/api/leaves`, {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify(leaveDetails)
-            })
-                .then(response => {
-                    if (!response.ok) {
-                        return response.json().then(err => { throw new Error(err.error || 'Unknown server error'); });
-                    }
-                    return response.json();
-                })
-                .then(() => {
-                    showPopup('Leave request submitted successfully', true);
-                    document.getElementById('leave-form').reset();
-                    document.querySelectorAll('#hour-selection').forEach(el => el.style.display = 'none');
-                    cachedLeaves = []; // Clear cache to force refresh
-                    fetchAndUpdateLeaves();
-                    updateLeaveStats();
-                    pendingLeaveDetails = null;
-                })
-                .catch(error => {
-                    console.error('Error submitting leave:', error);
-                    showPopup(error.message || 'Error submitting leave request', false);
-                    pendingLeaveDetails = null;
-                });
         }
 
         // Validation functions
@@ -1405,10 +1294,10 @@
         function validateEmpId() {
             const empIdInput = document.getElementById('emp-id');
             const errorMessage = document.getElementById('error-message-emp-id');
-            const regex = /^[ATS]{3}0(?!000)[0-9]{3}$/;
+            const regex = /^[A-Z]{3}0[0-9]{3}$/;
 
             if (!regex.test(empIdInput.value)) {
-                errorMessage.textContent = "Please enter a valid Employee ID (ATS0 followed by 3 digits, not all zeros).";
+                errorMessage.textContent = "Invalid Employee ID. Format: 3 uppercase letters + 4 digits (e.g., ABC0123).";
                 errorMessage.style.display = 'block';
                 return false;
             } else {
@@ -1420,10 +1309,10 @@
         function validateEmail() {
             const emailInput = document.getElementById('email');
             const errorMessage = document.getElementById('error-message-email');
-            const regex = /^[a-zA-Z][a-zA-Z0-9._-]{1,}[a-zA-Z]@(?:gmail\.com|outlook\.com|[\w-]+\.(?:co|in|org))$/;
+            const regex = /^[a-zA-Z0-9._%+\-]+@[a-zA-Z]{2,15}\.[a-zA-Z]{2,3}$/;
 
             if (!regex.test(emailInput.value)) {
-                errorMessage.textContent = "Email must start with a letter, end with a letter, and have a domain of gmail.com, outlook.com, or *.co/in/org.";
+                errorMessage.textContent = "Invalid email. Domain must end with at least two alphabets (e.g., .in, .org, .edu).";
                 errorMessage.style.display = 'block';
                 return false;
             } else {
@@ -1627,7 +1516,7 @@
             leaveCardsContainer.innerHTML = '';
             allLeavesContainer.innerHTML = '';
 
-             if (leaves.length === 0) {
+            if (leaves.length === 0) {
                 leaveCardsContainer.innerHTML = `
                     <div class="no-data">
                         <img src="https://cdn-icons-png.flaticon.com/512/4076/4076478.png" alt="No Data" class="no-data-img">

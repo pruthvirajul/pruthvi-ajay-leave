@@ -9,54 +9,50 @@
             margin: 0;
             padding: 0;
             box-sizing: border-box;
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            font-family: Arial, sans-serif;
         }
 
         body {
             display: flex;
             flex-direction: column;
             justify-content: flex-start;
-            align-items: center;
-          
-            color: #333;
+            align-items: flex-start;
+            padding: 20px;
+            color: white;
             background-color: #ffffff;
-            min-height: 100vh;
         }
 
         header {
             position: relative;
             text-align: center;
-            height: 140px;
-            background: linear-gradient(135deg, #6a11cb 0%, #2575fc 100%);
+            height: 120px;
+            background-color: #5f06a8;
             color: #fff;
             border-radius: 15px;
             overflow: hidden;
             display: flex;
-            width: 100%;
-           
+            width: 98%;
             align-items: center;
             justify-content: center;
             flex-direction: column;
-            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
-            margin-bottom: 30px;
+            font-family: Verdana, Geneva, Tahoma, sans-serif;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
         }
 
         header h1 {
             margin: 0;
-            font-size: 2.5rem;
+            font-size: 36px;
             color: white;
-            font-weight: 700;
-            letter-spacing: 1px;
+            font-weight: 600;
+            letter-spacing: 2px;
             position: relative;
             z-index: 2;
-            text-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
         }
 
         header p {
-            font-weight: 300;
-            font-size: 1.1rem;
+            font-weight: 100;
+            font-size: 18px;
             margin-top: 10px;
-            opacity: 0.9;
         }
 
         @keyframes moveCircles {
@@ -81,78 +77,63 @@
             height: 200px;
             background: rgba(255, 255, 255, 0.1);
             border-radius: 50%;
-            animation: moveCircles 15s infinite linear;
+            animation: moveCircles 10s infinite linear;
         }
 
         .circle:nth-child(1) {
             top: 10%;
             left: 20%;
-            animation-duration: 15s;
+            animation-duration: 8s;
         }
 
         .circle:nth-child(2) {
             top: 50%;
             left: 70%;
-            animation-duration: 20s;
-            animation-direction: reverse;
+            animation-duration: 12s;
         }
 
         .circle:nth-child(3) {
             top: 80%;
             left: 40%;
-            animation-duration: 25s;
+            animation-duration: 15s;
         }
 
         .page-container {
             display: flex;
             flex-direction: row;
             gap: 30px;
-            margin-top: 10px;
+            margin-top: 30px;
             width: 100%;
-            padding: 20px;
-            justify-content: space-between;
         }
 
         .leave-container {
-            width: 65%;
+            width: 700px;
             height: auto;
-            padding: 30px;
-            background: linear-gradient(rgb(221, 221, 255), white);
+            padding: 20px;
             display: flex;
             flex-direction: column;
-            gap: 25px;
+            gap: 20px;
             border-radius: 20px;
-            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.05);
-            border: 1px solid #e0e0e0;
+            background: linear-gradient(rgba(232, 232, 255, 0.763), rgba(255, 223, 255, 0.772));
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
         }
 
         .form-title {
-            font-size: 2rem;
+            font-size: 36px;
             text-align: center;
             margin-bottom: 20px;
-            color: #2c3e50;
-            font-weight: 600;
-            position: relative;
-            padding-bottom: 10px;
-        }
-
-        .form-title::after {
-            content: '';
-            position: absolute;
-            bottom: 0;
-            left: 50%;
-            transform: translateX(-50%);
-            width: 80px;
-            height: 3px;
-            background: linear-gradient(90deg, #6a11cb, #2575fc);
-            border-radius: 3px;
+            color: #000000;
+            font-family: "Anta", serif;
+            background: linear-gradient(90deg, #560bad, #8a2be2);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
         }
 
         .leave-form {
             display: grid;
             grid-template-columns: 1fr 1fr;
-            gap: 25px;
-            padding-top: 20px;
+            gap: 20px;
+            padding-top: 40px;
             justify-items: stretch;
         }
 
@@ -160,36 +141,24 @@
             display: flex;
             flex-direction: column;
             font-size: 16px;
-            margin-bottom: 5px;
+            margin-bottom: 2px;
         }
 
         .form-group label {
-            font-size: 1rem;
-            margin-bottom: 8px;
-            color: #2c3e50;
-            font-weight: 500;
+            font-size: 18px;
+            margin-bottom: 10px;
+            color: #000000;
         }
 
         .form-group input,
         .form-group select,
         .form-group textarea {
-            padding: 14px;
+            padding: 16px;
             border: 1px solid #ddd;
             border-radius: 8px;
-            font-size: 1rem;
-            margin-bottom: 5px;
+            font-size: 16px;
+            margin-bottom: 10px;
             height: 50px;
-            background: #f9f9f9;
-            transition: all 0.3s ease;
-        }
-
-        .form-group input:focus,
-        .form-group select:focus,
-        .form-group textarea:focus {
-            outline: none;
-            border-color: #6a11cb;
-            box-shadow: 0 0 0 2px rgba(106, 17, 203, 0.1);
-            background: white;
         }
 
         .form-group select,
@@ -204,10 +173,10 @@
 
         textarea {
             width: 100%;
-            padding: 14px;
+            padding: 10px;
             box-sizing: border-box;
             resize: none;
-            font-size: 1rem;
+            font-size: 16px;
         }
 
         .counter {
@@ -230,26 +199,25 @@
             display: flex;
             justify-content: center;
             align-items: center;
-            margin-top: 10px;
         }
 
-        .btnn {
-            --color: #6a11cb;
+        .btnn{
+            --color: #560bad;
             --bg-color: #fff;
             font-family: inherit;
             display: inline-block;
             width: 320px;
-            height: 3em;
+            height: 2.6em;
             line-height: 2.5em;
-            margin: 10px;
+            margin: 20px;
             position: relative;
             cursor: pointer;
             overflow: hidden;
             border: 2px solid var(--color);
             transition: color 0.5s, background 0.5s;
             z-index: 1;
-            font-size: 1.1rem;
-            border-radius: 10px;
+            font-size: 17px;
+            border-radius: 16px;
             font-weight: 500;
             color: var(--color);
             background-color: var(--bg-color);
@@ -292,84 +260,26 @@
         }
 
         .error-message {
-            color: #e74c3c;
-            font-size: 0.85rem;
+            color: red;
+            font-size: 14px;
             display: none;
             margin-top: 5px;
-            font-weight: 500;
         }
 
         .calendar-cards {
-            width: 32%;
-            display: flex;
-            flex-direction: column;
-            gap: 25px;
-        }
-
-        .calendar-container {
-            width: 100%;
-            background: linear-gradient(rgb(94, 94, 249), rgb(146, 146, 255));
-            border-radius: 15px;
-            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.05);
-            padding: 20px;
-            border: 1px solid #e0e0e0;
-        }
-
-        .calendar-header {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            margin-bottom: 15px;
-        }
-
-        .calendar-title {
-            font-size: 1.3rem;
-            font-weight: 600;
-            color: #ffffff;
-        }
-
-        .calendar-nav {
-            display: flex;
-            align-items: center;
-            gap: 10px;
-            margin-left: auto;
-            margin-right: auto;
-            color: white;
-        }
-
-        .calendar-nav button {
-            background: none;
-            border: none;
-            font-size: 1.2rem;
-            cursor: pointer;
-            color: #ffffff;
-            padding: 5px;
-            border-radius: 50%;
-            width: 30px;
-            height: 30px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            transition: all 0.3s ease;
-        }
-
-        .calendar-nav button:hover {
-            background: rgba(106, 17, 203, 0.1);
-        }
-
-        .calendar-month {
-            font-weight: 600;
-            min-width: 120px;
-            text-align: center;
+            width: 500px;
+            flex-wrap: wrap;
         }
 
         .calendar {
             width: 100%;
-            height: auto;
-            background: linear-gradient(rgba(194, 194, 255, 0.527), rgb(241, 168, 255));
+            height: 370px;
+            background: linear-gradient(135deg, #8a2be2, #87ceeb, #ffffff);
             border-radius: 10px;
-            padding: 10px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+            padding: 20px;
             box-sizing: border-box;
+            margin-top: 20px;
         }
 
         .calendar .header {
@@ -377,91 +287,75 @@
             justify-content: space-between;
             font-weight: 600;
             margin-bottom: 10px;
-            color: #000000;
+            color: #333;
+            border-bottom: 2px solid #ccc;
             padding-bottom: 10px;
-            border-bottom: 1px solid #eee;
         }
 
         .calendar .header span {
             flex: 1;
             text-align: center;
-            font-size: 0.9rem;
-            color: #000000;
         }
 
         .calendar .days {
             display: grid;
             grid-template-columns: repeat(7, 1fr);
-            gap: 8px;
+            gap: 5px;
         }
 
         .calendar .day {
             display: flex;
             justify-content: center;
             align-items: center;
-            height: 35px;
-            border-radius: 8px;
+            height: 40px;
+            border-radius: 50%;
             cursor: pointer;
-            transition: all 0.3s ease;
+            transition: background-color 0.3s ease;
             font-weight: 500;
-            color: #000000;
+            color: #333;
             position: relative;
-            font-size: 0.9rem;
-        }
-
-        .calendar .day:hover {
-            background: #f1f1f1;
         }
 
         .calendar .day.leave {
-            background-color: #2ecc71;
+            background-color: #66cc66;
             color: #fff;
         }
 
         .calendar .day.holiday {
-            background-color: #f39c12;
-            color: #fff;
+            background-color: #ffcc00;
+            color: #000;
         }
 
         .calendar .day.today {
-            background-color: #3498db;
+            background-color: #0077ff;
             color: #fff;
-            font-weight: 600;
-        }
-
-        .calendar .day.other-month {
-            color:transparent;
-        }
-        .calendar.day.other-month :hover{
-            background-color: none;
-
         }
 
         .calendar .day[data-tooltip]:hover::after {
             content: attr(data-tooltip);
             position: absolute;
-            top: -40px;
+            top: -30px;
             left: 50%;
             transform: translateX(-50%);
-            background-color: #34495e;
+            background-color: #333;
             color: #fff;
             padding: 5px 10px;
             border-radius: 5px;
-            font-size: 0.8rem;
+            font-size: 12px;
             white-space: nowrap;
             z-index: 10;
-            pointer-events: none;
         }
 
         .leave-stats {
             width: 100%;
-            background: white;
-            border: 1px solid #e0e0e0;
-            border-radius: 15px;
-            padding: 20px;
-            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.05);
+            background: #f9f9f9;
+            border: 1px solid #ddd;
+            border-radius: 10px;
+            padding: 15px;
+            margin-top: 20px;
+            box-shadow: none;
             display: flex;
-            justify-content: space-between;
+            justify-content: space-around;
             align-items: center;
             gap: 15px;
         }
@@ -477,74 +371,72 @@
         .leave-stats img {
             width: 30px;
             height: 30px;
-            margin-bottom: 10px;
-            filter: hue-rotate(200deg);
+            margin-bottom: 8px;
         }
 
         .leave-stats h3 {
-            font-size: 1rem;
-            font-weight: 600;
-            color: #2c3e50;
-            margin-bottom: 5px;
+            font-size: 18px;
+            font-weight: 500;
+            color: #333;
+            margin-bottom: 6px;
         }
 
         .leave-stats p {
-            font-size: 1.2rem;
-            font-weight: 700;
-            color: #6a11cb;
+            font-size: 16px;
+            font-weight: 400;
+            color: #555;
         }
 
         .leaves-section {
             width: 100%;
-            background: white;
-            border-radius: 15px;
+            margin-top: 30px;
+            background: #ffffff;
+            border-radius: 12px;
             padding: 20px;
-            height: 800px;
-            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.05);
-            border: 1px solid #e0e0e0;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
         }
 
         .leaves-section h2 {
-            font-size: 1.3rem;
-            color: #2c3e50;
+            font-size: 24px;
+            color: #333;
             margin-bottom: 20px;
+            text-align: center;
+            font-family: "Anta", serif;
             display: flex;
             justify-content: space-between;
             align-items: center;
-            font-weight: 600;
         }
 
         .view-all-btn {
-            background: linear-gradient(135deg, #6a11cb, #2575fc);
+            background: linear-gradient(135deg, #5f06a8, #8a2be2);
             color: white;
             border: none;
             padding: 8px 16px;
             border-radius: 8px;
             cursor: pointer;
-            font-size: 0.9rem;
+            font-size: 14px;
             transition: all 0.3s ease;
-            font-weight: 500;
         }
 
         .view-all-btn:hover {
             transform: translateY(-2px);
-            box-shadow: 0 5px 10px rgba(0, 0, 0, 0.1);
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
         }
 
         .leaves-cards {
             display: grid;
-            grid-template-columns: 1fr;
-            gap: 15px;
+            grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+            gap: 20px;
             padding: 0;
         }
 
         .leave-card {
-            background: white;
+            background: linear-gradient(135deg, #f3e7ff, #e0f7fa);
             border: 1px solid #e0e0e0;
-            border-radius: 12px;
-            padding: 15px;
+            border-radius: 15px;
+            padding: 20px;
             color: #000;
-            box-shadow: 0 3px 10px rgba(0, 0, 0, 0.05);
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
             display: flex;
             flex-direction: column;
             gap: 12px;
@@ -555,9 +447,8 @@
         }
 
         .leave-card:hover {
-            transform: translateY(-3px);
-            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
-            border-color: #6a11cb;
+            transform: translateY(-5px);
+            box-shadow: 0 8px 16px rgba(0, 0, 0, 0.15);
         }
 
         .leave-card::before {
@@ -565,9 +456,9 @@
             position: absolute;
             top: 0;
             left: 0;
-            width: 4px;
+            width: 5px;
             height: 100%;
-            background: linear-gradient(to bottom, #6a11cb, #2575fc);
+            background: linear-gradient(to bottom, #5f06a8, #8a2be2);
         }
 
         .leave-card-header {
@@ -580,25 +471,24 @@
             width: 40px;
             height: 40px;
             border-radius: 50%;
-            background: linear-gradient(135deg, #6a11cb, #2575fc);
+            background: linear-gradient(135deg, #8a2be2, #5f06a8);
             display: flex;
             align-items: center;
             justify-content: center;
             color: white;
             font-weight: bold;
-            flex-shrink: 0;
         }
 
         .leave-card-title {
-            font-size: 1rem;
+            font-size: 18px;
             font-weight: 600;
             margin: 0;
-            color: #2c3e50;
+            color: #333;
         }
 
         .leave-card-type {
-            font-size: 0.85rem;
-            color: #6a11cb;
+            font-size: 14px;
+            color: #5f06a8;
             font-weight: 500;
         }
 
@@ -606,7 +496,7 @@
             display: flex;
             flex-direction: column;
             gap: 8px;
-            margin-top: 5px;
+            margin-top: 8px;
         }
 
         .leave-card-detail {
@@ -616,14 +506,12 @@
 
         .leave-card-label {
             font-weight: 500;
-            color: #7f8c8d;
-            font-size: 0.85rem;
+            color: #666;
         }
 
         .leave-card-value {
-            color: #2c3e50;
+            color: #333;
             text-align: right;
-            font-size: 0.85rem;
         }
 
         .leave-card-status {
@@ -631,8 +519,8 @@
             padding: 4px 12px;
             border-radius: 20px;
             font-weight: 600;
-            font-size: 0.75rem;
-            margin-top: 5px;
+            font-size: 12px;
+            margin-top: 8px;
             align-self: flex-start;
         }
 
@@ -652,40 +540,37 @@
         }
 
         .leave-card .details-button {
-            padding: 6px 12px;
-            background: linear-gradient(135deg, #6a11cb, #2575fc);
+            padding: 6px 10px;
+            background-color: #666;
             color: #fff;
             border: none;
-            border-radius: 6px;
+            border-radius: 4px;
             cursor: pointer;
-            font-size: 0.8rem;
+            font-family: Arial, sans-serif;
+            font-size: 12px;
             font-weight: 500;
-            transition: all 0.3s ease;
+            transition: background-color 0.3s ease;
             width: 100px;
             align-self: flex-end;
-            margin-top: 5px;
         }
 
         .leave-card .details-button:hover {
-            opacity: 0.9;
-            transform: translateY(-1px);
+            background-color: #555;
         }
 
-        .no-data, .loading-state {
+        .no-data {
             text-align: center;
             padding: 20px;
         }
 
-        .no-data img, .loading-state img {
-            width: 100px;
-            height: 100px;
-            opacity: 0.5;
+        .no-data img {
+            width: 150px;
+            height: 150px;
         }
 
-        .no-data p, .loading-state p {
-            font-size: 0.9rem;
-            color: #7f8c8d;
-            margin-top: 10px;
+        .no-data p {
+            font-size: 14px;
+            color: #555;
         }
 
         .modal {
@@ -703,53 +588,21 @@
 
         .modal-content {
             background: white;
-            padding: 25px;
-            border-radius: 15px;
+            padding: 20px;
+            border-radius: 10px;
             line-height: 1.6;
             width: 90%;
-            max-width: 500px;
+            max-width: 700px;
             max-height: 80vh;
             overflow: auto;
-            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
             position: relative;
-        }
-
-        .modal-content h2 {
-            color: #2c3e50;
-            margin-bottom: 15px;
-            font-size: 1.5rem;
-            border-bottom: 1px solid #eee;
-            padding-bottom: 10px;
-        }
-
-        .modal-content .close {
-            position: absolute;
-            top: 15px;
-            right: 15px;
-            font-size: 1.5rem;
-            cursor: pointer;
-            color: #7f8c8d;
-            transition: all 0.3s ease;
-        }
-
-        .modal-content .close:hover {
-            color: #e74c3c;
         }
 
         #modal-details {
             display: flex;
             flex-direction: column;
             gap: 15px;
-        }
-
-        #modal-details p {
-            margin: 5px 0;
-            font-size: 0.95rem;
-            color: #2c3e50;
-        }
-
-        #modal-details .leave-card-status {
-            margin-left: 5px;
         }
 
         .all-leaves-modal {
@@ -772,8 +625,8 @@
             max-width: 800px;
             max-height: 80vh;
             overflow-y: auto;
-            padding: 25px;
-            box-shadow: 0 15px 40px rgba(0, 0, 0, 0.2);
+            padding: 20px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
         }
 
         .all-leaves-header {
@@ -781,27 +634,27 @@
             justify-content: space-between;
             align-items: center;
             margin-bottom: 20px;
-            padding-bottom: 15px;
+            padding-bottom: 10px;
             border-bottom: 1px solid #eee;
         }
 
         .all-leaves-title {
-            font-size: 1.5rem;
+            font-size: 22px;
             font-weight: 600;
-            color: #2c3e50;
+            color: #333;
         }
 
         .all-leaves-close {
             background: none;
             border: none;
-            font-size: 1.5rem;
+            font-size: 24px;
             cursor: pointer;
-            color: #7f8c8d;
+            color: #666;
             transition: all 0.3s ease;
         }
 
         .all-leaves-close:hover {
-            color: #e74c3c;
+            color: #ff0000;
             transform: rotate(90deg);
         }
 
@@ -815,15 +668,14 @@
             position: fixed;
             top: 20px;
             left: -400px;
-            background: linear-gradient(135deg, #6a11cb, #2575fc);
+            background: linear-gradient(135deg, #4facfe, #00f2fe);
             color: white;
             padding: 15px 25px;
             border-radius: 10px;
-            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.2);
-            font-size: 1rem;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+            font-size: 16px;
             z-index: 1000;
             transition: left 0.5s ease-in-out;
-            font-weight: 500;
         }
 
         .popup-card.show {
@@ -832,79 +684,6 @@
 
         .popup-card.hide {
             left: -400px;
-        }
-
-        .confirmation-modal {
-            display: none;
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background-color: rgba(0, 0, 0, 0.5);
-            justify-content: center;
-            align-items: center;
-            z-index: 1000;
-        }
-
-        .confirmation-modal-content {
-            background: white;
-            padding: 25px;
-            border-radius: 15px;
-            width: 90%;
-            max-width: 400px;
-            text-align: center;
-            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
-            position: relative;
-        }
-
-        .confirmation-modal-content h2 {
-            color: #2c3e50;
-            font-size: 1.5rem;
-            margin-bottom: 15px;
-        }
-
-        .confirmation-modal-content p {
-            color: #2c3e50;
-            font-size: 1rem;
-            margin-bottom: 20px;
-        }
-
-        .confirmation-modal-buttons {
-            display: flex;
-            justify-content: center;
-            gap: 15px;
-        }
-
-        .confirmation-modal-buttons button {
-            padding: 10px 20px;
-            border: none;
-            border-radius: 8px;
-            font-size: 1rem;
-            cursor: pointer;
-            transition: all 0.3s ease;
-        }
-
-        .confirm-btn {
-            background: linear-gradient(135deg, #6a11cb, #2575fc);
-            color: white;
-            font-weight: 500;
-        }
-
-        .confirm-btn:hover {
-            opacity: 0.9;
-            transform: translateY(-2px);
-        }
-
-        .cancel-btn {
-            background: #e0e0e0;
-            color: #2c3e50;
-            font-weight: 500;
-        }
-
-        .cancel-btn:hover {
-            background: #d0d0d0;
-            transform: translateY(-2px);
         }
 
         @media (max-width: 1200px) {
@@ -916,23 +695,15 @@
             .leave-container,
             .calendar-cards {
                 width: 100%;
-                max-width: 800px;
+                max-width: 700px;
+            }
+
+            .leave-stats {
+                width: 100%;
             }
         }
 
         @media (max-width: 768px) {
-            header {
-                height: 120px;
-            }
-
-            header h1 {
-                font-size: 1.8rem;
-            }
-
-            header p {
-                font-size: 1rem;
-            }
-
             .leave-form {
                 grid-template-columns: 1fr;
             }
@@ -942,90 +713,52 @@
             }
 
             .form-title {
-                font-size: 1.5rem;
+                font-size: 28px;
             }
 
-            .leave-container {
-                padding: 20px;
+            header h1 {
+                font-size: 28px;
             }
 
-            .btnn {
-                width: 100%;
-                font-size: 1rem;
+            .leaves-cards, .all-leaves-grid {
+                grid-template-columns: 1fr;
             }
 
-            .calendar .day {
-                height: 30px;
-                font-size: 0.8rem;
+            .leave-card {
+                padding: 15px;
             }
 
             .leave-card-title {
-                font-size: 0.95rem;
+                font-size: 16px;
             }
 
-            .leave-card-type,
-            .leave-card-value,
-            .leave-card-label {
-                font-size: 0.8rem;
+            .leave-card-type, .leave-card-value, .leave-card-label {
+                font-size: 13px;
             }
 
             .leave-card-status {
-                font-size: 0.7rem;
+                font-size: 11px;
+                padding: 3px 10px;
             }
 
             .leave-card .details-button {
                 width: 90px;
-                font-size: 0.8rem;
+                font-size: 11px;
             }
 
             .view-all-btn {
-                font-size: 0.8rem;
+                font-size: 13px;
+                padding: 7px 14px;
+            }
+
+            .leave-stats {
+                flex-direction: column;
+                gap: 10px;
             }
 
             .all-leaves-content {
                 width: 95%;
                 padding: 15px;
-            }
-
-            .all-leaves-grid {
-                grid-template-columns: 1fr;
-            }
-        }
-
-        @media (max-width: 480px) {
-            header {
-                height: 100px;
-            }
-
-            header h1 {
-                font-size: 1.5rem;
-            }
-
-            header p {
-                font-size: 0.9rem;
-            }
-
-            .leave-container {
-                padding: 15px;
-            }
-
-            .form-title {
-                font-size: 1.3rem;
-            }
-
-            .calendar-header {
-                flex-direction: column;
-                gap: 10px;
-                align-items: flex-start;
-            }
-
-            .calendar-nav {
-                width: 100%;
-                justify-content: space-between;
-            }
-
-            .calendar-month {
-                min-width: auto;
             }
         }
     </style>
@@ -1043,7 +776,6 @@
 
     <div class="page-container">
         <div class="leave-container">
-            <h2 class="form-title">Leave Application</h2>
             <form class="leave-form" id="leave-form">
                 <div class="form-group">
                     <label for="name">Full Name:</label>
@@ -1055,17 +787,16 @@
 
                 <div class="form-group">
                     <label for="emp-id">Employee ID:</label>
-                    <input type="text" id="emp-id" name="emp-id" placeholder="Enter your Employee ID" required minlength="7" maxlength="7" 
-                           pattern="^[ATS]{3}0(?!000)[0-9]{3}$"
-                           title="Please enter a valid Employee ID (ATS0 followed by 3 digits, not all zeros)">
+                    <input type="text" id="emp-id" name="emp-id" placeholder="Enter your Employee ID" required minlength="7" maxlength="7" pattern="^[A-Z]{3}0[0-9]{3}$"
+                           title="Employee ID should be in the format: 3 uppercase letters followed by 4 digits">
                     <p id="error-message-emp-id" class="error-message"></p>
                 </div>
 
                 <div class="form-group">
                     <label for="email">Email Address:</label>
                     <input id="email" type="email" placeholder="Enter your Email ID" required minlength="8" maxlength="50"
-                           pattern="^[a-zA-Z][a-zA-Z0-9._-]{1,}[a-zA-Z]@(?:gmail\.com|outlook\.com|[\w-]+\.(?:co|in|org))$"
-                           title="Email must start with a letter, end with a letter, and have a domain of gmail.com, outlook.com, or *.co/in/org">
+                           pattern="^[a-zA-Z0-9._%+\-]+@[a-zA-Z]{2,15}\.[a-zA-Z]{2,3}$"
+                           title="Please enter a valid email address">
                     <p id="error-message-email" class="error-message"></p>
                 </div>
 
@@ -1127,26 +858,17 @@
         </div>
 
         <div class="calendar-cards">
-            <div class="calendar-container">
-                <div class="calendar-header">
-                    <div class="calendar-nav">
-                        <button id="prev-month"><</button>
-                        <div class="calendar-month" id="calendar-month">May 2023</div>
-                        <button id="next-month">></button>
-                    </div>
+            <div class="calendar">
+                <div class="header">
+                    <span>Sun</span>
+                    <span>Mon</span>
+                    <span>Tue</span>
+                    <span>Wed</span>
+                    <span>Thu</span>
+                    <span>Fri</span>
+                    <span>Sat</span>
                 </div>
-                <div class="calendar">
-                    <div class="header">
-                        <span>Sun</span>
-                        <span>Mon</span>
-                        <span>Tue</span>
-                        <span>Wed</span>
-                        <span>Thu</span>
-                        <span>Fri</span>
-                        <span>Sat</span>
-                    </div>
-                    <div class="days" id="days"></div>
-                </div>
+                <div class="days" id="days"></div>
             </div>
             <div class="leaves-section">
                 <h2>
@@ -1174,17 +896,6 @@
                 <div class="all-leaves-grid" id="all-leaves-container"></div>
             </div>
         </div>
-
-        <div id="confirmation-modal" class="confirmation-modal">
-            <div class="confirmation-modal-content">
-                <h2>Confirm Leave Submission</h2>
-                <p>Are you sure you want to submit this leave request?</p>
-                <div class="confirmation-modal-buttons">
-                    <button class="confirm-btn" id="confirm-submit">Confirm</button>
-                    <button class="cancel-btn" id="cancel-submit">Cancel</button>
-                </div>
-            </div>
-        </div>
     </div>
 
     <div id="popup-card" class="popup-card">
@@ -1192,21 +903,7 @@
     </div>
 
     <script>
-        const API_BASE_URL = 'http://54.166.206.245:3008';
-        let currentMonth = new Date().getMonth();
-        let currentYear = new Date().getFullYear();
-        let cachedLeaves = []; // Cache for leave data
-        let lastEmpId = null; // Track last fetched empId
-        let pendingLeaveDetails = null; // Store leave details temporarily
-
-        // Debounce utility
-        function debounce(func, wait) {
-            let timeout;
-            return function (...args) {
-                clearTimeout(timeout);
-                timeout = setTimeout(() => func.apply(this, args), wait);
-            };
-        }
+        const API_BASE_URL = 'http://54.166.206.245:3008'; 
 
         document.addEventListener('DOMContentLoaded', function () {
             // Set up date constraints
@@ -1232,33 +929,9 @@
 
             // Initialize form
             initializeForm();
-            loadCalendar(); // Load calendar without leaves initially
-            // Load leaves only when empId is valid
-            document.getElementById('emp-id').addEventListener('change', debounce(() => {
-                if (validateEmpId()) {
-                    fetchAndUpdateLeaves();
-                    updateLeaveStats();
-                }
-            }, 500));
-
-            // Calendar navigation
-            document.getElementById('prev-month').addEventListener('click', () => {
-                currentMonth--;
-                if (currentMonth < 0) {
-                    currentMonth = 11;
-                    currentYear--;
-                }
-                loadCalendar();
-            });
-
-            document.getElementById('next-month').addEventListener('click', () => {
-                currentMonth++;
-                if (currentMonth > 11) {
-                    currentMonth = 0;
-                    currentYear++;
-                }
-                loadCalendar();
-            });
+            loadLeaves();
+            loadCalendar();
+            updateLeaveStats();
         });
 
         function initializeForm() {
@@ -1290,13 +963,12 @@
             fromDateInput.addEventListener('change', toggleHourSelection);
             toDateInput.addEventListener('change', toggleHourSelection);
 
-            // Form submission with confirmation modal
+            // Form submission
             document.getElementById('leave-form').addEventListener('submit', function (event) {
                 event.preventDefault();
                 if (!validateForm()) return;
 
-                // Store leave details
-                pendingLeaveDetails = {
+                const leaveDetails = {
                     name: document.getElementById('name').value,
                     emp_id: document.getElementById('emp-id').value,
                     email: document.getElementById('email').value,
@@ -1307,22 +979,31 @@
                     to_hour: document.getElementById('to-hour').value || null,
                     reason: document.getElementById('reason').value
                 };
+                console.log('Submitting leaveDetails:', leaveDetails);
 
-                // Show confirmation modal
-                document.getElementById('confirmation-modal').style.display = 'flex';
-            });
-
-            // Confirmation modal buttons
-            document.getElementById('confirm-submit').addEventListener('click', function () {
-                document.getElementById('confirmation-modal').style.display = 'none';
-                if (pendingLeaveDetails) {
-                    submitLeaveRequest(pendingLeaveDetails);
-                }
-            });
-
-            document.getElementById('cancel-submit').addEventListener('click', function () {
-                document.getElementById('confirmation-modal').style.display = 'none';
-                pendingLeaveDetails = null;
+                fetch(`${API_BASE_URL}/api/leaves`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(leaveDetails)
+                })
+                    .then(response => {
+                        if (!response.ok) {
+                            return response.json().then(err => { throw new Error(err.error || 'Unknown server error'); });
+                        }
+                        return response.json();
+                    })
+                    .then(() => {
+                        showPopup('Leave request submitted successfully', true);
+                        document.getElementById('leave-form').reset();
+                        hourSelection.forEach(el => el.style.display = 'none');
+                        loadLeaves();
+                        loadCalendar();
+                        updateLeaveStats();
+                    })
+                    .catch(error => {
+                        console.error('Error submitting leave:', error);
+                        showPopup(error.message || 'Error submitting leave request', false);
+                    });
             });
 
             // Modal close functionality for details modal
@@ -1335,10 +1016,6 @@
             window.addEventListener('click', function (event) {
                 if (event.target === document.getElementById('modal')) {
                     document.getElementById('modal').style.display = 'none';
-                }
-                if (event.target === document.getElementById('confirmation-modal')) {
-                    document.getElementById('confirmation-modal').style.display = 'none';
-                    pendingLeaveDetails = null;
                 }
             });
 
@@ -1356,34 +1033,6 @@
                     document.getElementById('all-leaves-modal').style.display = 'none';
                 }
             });
-        }
-
-        function submitLeaveRequest(leaveDetails) {
-            fetch(`${API_BASE_URL}/api/leaves`, {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify(leaveDetails)
-            })
-                .then(response => {
-                    if (!response.ok) {
-                        return response.json().then(err => { throw new Error(err.error || 'Unknown server error'); });
-                    }
-                    return response.json();
-                })
-                .then(() => {
-                    showPopup('Leave request submitted successfully', true);
-                    document.getElementById('leave-form').reset();
-                    document.querySelectorAll('#hour-selection').forEach(el => el.style.display = 'none');
-                    cachedLeaves = []; // Clear cache to force refresh
-                    fetchAndUpdateLeaves();
-                    updateLeaveStats();
-                    pendingLeaveDetails = null;
-                })
-                .catch(error => {
-                    console.error('Error submitting leave:', error);
-                    showPopup(error.message || 'Error submitting leave request', false);
-                    pendingLeaveDetails = null;
-                });
         }
 
         // Validation functions
@@ -1405,10 +1054,10 @@
         function validateEmpId() {
             const empIdInput = document.getElementById('emp-id');
             const errorMessage = document.getElementById('error-message-emp-id');
-            const regex = /^[ATS]{3}0(?!000)[0-9]{3}$/;
+            const regex = /^[A-Z]{3}0[0-9]{3}$/;
 
             if (!regex.test(empIdInput.value)) {
-                errorMessage.textContent = "Please enter a valid Employee ID (ATS0 followed by 3 digits, not all zeros).";
+                errorMessage.textContent = "Invalid Employee ID. Format: 3 uppercase letters + 4 digits (e.g., ABC0123).";
                 errorMessage.style.display = 'block';
                 return false;
             } else {
@@ -1420,10 +1069,10 @@
         function validateEmail() {
             const emailInput = document.getElementById('email');
             const errorMessage = document.getElementById('error-message-email');
-            const regex = /^[a-zA-Z][a-zA-Z0-9._-]{1,}[a-zA-Z]@(?:gmail\.com|outlook\.com|[\w-]+\.(?:co|in|org))$/;
+            const regex = /^[a-zA-Z0-9._%+\-]+@[a-zA-Z]{2,15}\.[a-zA-Z]{2,3}$/;
 
             if (!regex.test(emailInput.value)) {
-                errorMessage.textContent = "Email must start with a letter, end with a letter, and have a domain of gmail.com, outlook.com, or *.co/in/org.";
+                errorMessage.textContent = "Invalid email. Domain must end with at least two alphabets (e.g., .in, .org, .edu).";
                 errorMessage.style.display = 'block';
                 return false;
             } else {
@@ -1560,7 +1209,7 @@
 
         function updateLeaveStats() {
             const empId = document.getElementById('emp-id').value;
-            if (!empId || !validateEmpId()) return;
+            if (!empId) return;
             fetch(`${API_BASE_URL}/api/leave-stats/${empId}`)
                 .then(response => {
                     if (!response.ok) {
@@ -1578,29 +1227,9 @@
                 });
         }
 
-        function fetchAndUpdateLeaves() {
+        function loadLeaves() {
             const empId = document.getElementById('emp-id').value;
-            if (!empId || !validateEmpId()) {
-                renderLeaves([]);
-                return;
-            }
-
-            // Show loading state
-            const leaveCardsContainer = document.getElementById('leave-cards');
-            leaveCardsContainer.innerHTML = `
-                <div class="loading-state">
-                    <img src="https://cdn-icons-png.flaticon.com/512/4076/4076478.png" alt="Loading" class="no-data-img">
-                    <p>Loading leave requests...</p>
-                </div>
-            `;
-
-            if (empId === lastEmpId && cachedLeaves.length > 0) {
-                // Use cached data if empId hasn't changed
-                renderLeaves(cachedLeaves);
-                loadCalendar();
-                return;
-            }
-
+            if (!empId) return;
             fetch(`${API_BASE_URL}/api/leaves/${empId}`)
                 .then(response => {
                     if (!response.ok) {
@@ -1609,52 +1238,44 @@
                     return response.json();
                 })
                 .then(leaves => {
-                    cachedLeaves = leaves;
-                    lastEmpId = empId;
-                    renderLeaves(leaves);
-                    loadCalendar();
+                    // Sort leaves by date (newest first)
+                    leaves.sort((a, b) => new Date(b.from_date) - new Date(a.from_date));
+                    
+                    const leaveCardsContainer = document.getElementById('leave-cards');
+                    const allLeavesContainer = document.getElementById('all-leaves-container');
+                    leaveCardsContainer.innerHTML = '';
+                    allLeavesContainer.innerHTML = '';
+
+                    if (leaves.length === 0) {
+                        leaveCardsContainer.innerHTML = `
+                            <div class="no-data">
+                                <img src="https://cdn-icons-png.flaticon.com/512/4076/4076478.png" alt="No Data" class="no-data-img">
+                                <p>No leave requests found.</p>
+                            </div>
+                        `;
+                        document.getElementById('view-all-btn').style.display = 'none';
+                        return;
+                    }
+
+                    // Show only 3 most recent leaves in main view
+                    const recentLeaves = leaves.slice(0, 3);
+                    recentLeaves.forEach((leave, index) => {
+                        leaveCardsContainer.appendChild(createLeaveCard(leave));
+                    });
+
+                    // Add all leaves to the modal
+                    leaves.forEach((leave, index) => {
+                        allLeavesContainer.appendChild(createLeaveCard(leave));
+                    });
+
+                    // Show "View All" button if there are more than 3 leaves
+                    document.getElementById('view-all-btn').style.display = 
+                        leaves.length > 3 ? 'block' : 'none';
                 })
                 .catch(error => {
                     console.error('Error loading leaves:', error);
-                    renderLeaves([]);
                     showPopup(error.message || 'Error loading leave requests', false);
                 });
-        }
-
-        function renderLeaves(leaves) {
-            const leaveCardsContainer = document.getElementById('leave-cards');
-            const allLeavesContainer = document.getElementById('all-leaves-container');
-            leaveCardsContainer.innerHTML = '';
-            allLeavesContainer.innerHTML = '';
-
-             if (leaves.length === 0) {
-                leaveCardsContainer.innerHTML = `
-                    <div class="no-data">
-                        <img src="https://cdn-icons-png.flaticon.com/512/4076/4076478.png" alt="No Data" class="no-data-img">
-                        <p>No leave requests found.</p>
-                    </div>
-                `;
-                document.getElementById('view-all-btn').style.display = 'none';
-                return;
-            }
-
-            // Sort leaves by date (newest first)
-            leaves.sort((a, b) => new Date(b.from_date) - new Date(a.from_date));
-
-            // Show only 3 most recent leaves in main view
-            const recentLeaves = leaves.slice(0, 3);
-            recentLeaves.forEach(leave => {
-                leaveCardsContainer.appendChild(createLeaveCard(leave));
-            });
-
-            // Add all leaves to the modal
-            leaves.forEach(leave => {
-                allLeavesContainer.appendChild(createLeaveCard(leave));
-            });
-
-            // Show "View All" button if there are more than 3 leaves
-            document.getElementById('view-all-btn').style.display = 
-                leaves.length > 3 ? 'block' : 'none';
         }
 
         function createLeaveCard(leave) {
@@ -1662,7 +1283,7 @@
             card.className = 'leave-card';
             const statusClass = `status-${leave.status.toLowerCase()}`;
             const initials = leave.name.split(' ').map(n => n[0]).join('').toUpperCase();
-
+            
             card.innerHTML = `
                 <div class="leave-card-header">
                     <div class="leave-card-avatar">${initials}</div>
@@ -1692,7 +1313,7 @@
             
             // Add click event to show details
             card.querySelector('.details-button').addEventListener('click', (e) => {
-                e.stopPropagation();
+                e.stopPropagation(); // Prevent card click from triggering
                 showDetails(leave.id);
             });
             card.addEventListener('click', () => showDetails(leave.id));
@@ -1705,95 +1326,103 @@
         }
 
         function showDetails(id) {
-            const leave = cachedLeaves.find(l => l.id === id);
-            if (!leave) {
-                showPopup('Leave not found', false);
-                return;
-            }
-            const modalDetails = document.getElementById('modal-details');
-            modalDetails.innerHTML = '';
-            const statusClass = `status-${leave.status.toLowerCase()}`;
-            const card = document.createElement('div');
-            card.className = 'leave-card';
-            card.innerHTML = `
-                <h3 class="leave-card-title">${leave.name}</h3>
-                <p>Employee ID: ${leave.emp_id}</p>
-                <p>Email: ${leave.email}</p>
-                <p>Leave Type: ${leave.leave_type}</p>
-                <p>Period: ${formatDisplayDate(leave.from_date)} to ${formatDisplayDate(leave.to_date)}</p>
-                ${leave.from_hour && leave.to_hour ? `<p>Time: ${leave.from_hour} to ${leave.to_hour}</p>` : ''}
-                <p>Reason: ${leave.reason}</p>
-                <p>Status: <span class="leave-card-status ${statusClass}">${leave.status}</span></p>
-            `;
-            modalDetails.appendChild(card);
-            document.getElementById('modal').style.display = 'flex';
+            fetch(`${API_BASE_URL}/api/leaves`)
+                .then(response => {
+                    if (!response.ok) {
+                        return response.json().then(err => { throw new Error(err.error || 'Failed to fetch leaves'); });
+                    }
+                    return response.json();
+                })
+                .then(leaves => {
+                    const leave = leaves.find(l => l.id === id);
+                    if (!leave) throw new Error('Leave not found');
+                    const modalDetails = document.getElementById('modal-details');
+                    modalDetails.innerHTML = '';
+                    const statusClass = `status-${leave.status.toLowerCase()}`;
+                    const card = document.createElement('div');
+                    card.className = 'leave-card';
+                    card.innerHTML = `
+                        <h3 class="leave-card-title">${leave.name}</h3>
+                        <p>Employee ID: ${leave.emp_id}</p>
+                        <p>Email: ${leave.email}</p>
+                        <p>Leave Type: ${leave.leave_type}</p>
+                        <p>Period: ${formatDisplayDate(leave.from_date)} to ${formatDisplayDate(leave.to_date)}</p>
+                        ${leave.from_hour && leave.to_hour ? `<p>Time: ${leave.from_hour} to ${leave.to_hour}</p>` : ''}
+                        <p>Reason: ${leave.reason}</p>
+                        <p>Status: <span class="leave-card-status ${statusClass}">${leave.status}</span></p>
+                    `;
+                    modalDetails.appendChild(card);
+                    document.getElementById('modal').style.display = 'flex';
+                })
+                .catch(error => {
+                    console.error('Error fetching leave details:', error);
+                    showPopup(error.message || 'Error fetching leave details', false);
+                });
         }
 
         function loadCalendar() {
             const daysContainer = document.getElementById('days');
-            const monthDisplay = document.getElementById('calendar-month');
             const today = new Date();
-            const firstDayOfMonth = new Date(currentYear, currentMonth, 1).getDay();
-            const daysInMonth = new Date(currentYear, currentMonth + 1, 0).getDate();
-            const lastDayOfMonth = new Date(currentYear, currentMonth, daysInMonth).getDay();
-            const daysInLastMonth = new Date(currentYear, currentMonth, 0).getDate();
-
-            // Update month display
-            const monthNames = ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"];
-            monthDisplay.textContent = `${monthNames[currentMonth]} ${currentYear}`;
+            const currentYear = today.getFullYear();
+            const currentMonth = today.getMonth() + 1;
+            const firstDayOfMonth = new Date(currentYear, currentMonth - 1, 1).getDay();
+            const daysInMonth = new Date(currentYear, currentMonth, 0).getDate();
 
             daysContainer.innerHTML = '';
 
-            // Add days from previous month
-            for (let i = firstDayOfMonth; i > 0; i--) {
-                const dayElement = document.createElement('div');
-                dayElement.className = 'day other-month';
-                dayElement.textContent = daysInLastMonth - i + 1;
-                daysContainer.appendChild(dayElement);
+            // Add empty days for the first week
+            for (let i = 0; i < firstDayOfMonth; i++) {
+                const emptyDay = document.createElement('div');
+                emptyDay.className = 'day';
+                daysContainer.appendChild(emptyDay);
             }
 
-            // Add days of current month
+            // Add days of the month
             for (let day = 1; day <= daysInMonth; day++) {
                 const dayElement = document.createElement('div');
                 dayElement.className = 'day';
                 dayElement.textContent = day;
 
-                // Check if this day is today
-                if (day === today.getDate() && currentMonth === today.getMonth() && currentYear === today.getFullYear()) {
-                    dayElement.classList.add('today');
-                    dayElement.setAttribute('data-tooltip', 'Today');
-                }
-
                 // Check if this day is a holiday
-                const monthHolidays = holidays[currentMonth + 1];
+                const monthHolidays = holidays[currentMonth];
                 if (monthHolidays && monthHolidays[day]) {
                     dayElement.classList.add('holiday');
                     dayElement.setAttribute('data-tooltip', monthHolidays[day]);
                 }
 
-                // Check if this day has an approved leave using cached data
-                const leaveOnThisDay = cachedLeaves.find(l => {
-                    const leaveDate = new Date(l.from_date);
-                    const leaveEndDate = new Date(l.to_date);
-                    const currentDate = new Date(currentYear, currentMonth, day);
-                    return l.status === 'Approved' &&
-                           currentDate >= leaveDate &&
-                           currentDate <= leaveEndDate;
-                });
+                // Check if this day has an approved leave
+                const empId = document.getElementById('emp-id').value;
+                if (empId) {
+                    fetch(`${API_BASE_URL}/api/leaves/${empId}`)
+                        .then(response => {
+                            if (!response.ok) {
+                                return response.json().then(err => { throw new Error(err.error || 'Failed to fetch leaves'); });
+                            }
+                            return response.json();
+                        })
+                        .then(leaves => {
+                            const leaveOnThisDay = leaves.find(l => {
+                                const leaveDate = new Date(l.from_date);
+                                return leaveDate.getFullYear() === currentYear &&
+                                       leaveDate.getMonth() + 1 === currentMonth &&
+                                       leaveDate.getDate() === day &&
+                                       l.status === 'Approved';
+                            });
 
-                if (leaveOnThisDay) {
-                    dayElement.classList.add('leave');
-                    dayElement.setAttribute('data-tooltip', `Leave Type: ${leaveOnThisDay.leave_type}`);
+                            if (leaveOnThisDay) {
+                                dayElement.classList.add('leave');
+                                dayElement.setAttribute('data-tooltip', `Leave Type: ${leaveOnThisDay.leave_type}`);
+                            }
+                        })
+                        .catch(error => console.error('Error fetching leaves for calendar:', error));
                 }
 
-                daysContainer.appendChild(dayElement);
-            }
+                // Highlight today
+                if (day === today.getDate() && currentMonth === today.getMonth() + 1 && currentYear === today.getFullYear()) {
+                    dayElement.classList.add('today');
+                    dayElement.setAttribute('data-tooltip', 'Today');
+                }
 
-            // Add days from next month
-            for (let i = 1; i <= (6 - lastDayOfMonth); i++) {
-                const dayElement = document.createElement('div');
-                dayElement.className = 'day other-month';
-                dayElement.textContent = i;
                 daysContainer.appendChild(dayElement);
             }
         }
@@ -1813,7 +1442,7 @@
             const popup = document.getElementById('popup-card');
             popup.textContent = message;
             popup.style.background = isSuccess
-                ? 'linear-gradient(135deg, #6a11cb, #2575fc)'
+                ? 'linear-gradient(135deg, #4facfe, #00f2fe)'
                 : 'linear-gradient(135deg, #ff6666, #ff9999)';
             popup.classList.add('show');
             setTimeout(() => {
@@ -1824,6 +1453,13 @@
                 }, 500);
             }, 5000);
         }
+
+        // Update leave stats and reload leaves when emp-id changes
+        document.getElementById('emp-id').addEventListener('change', () => {
+            updateLeaveStats();
+            loadLeaves();
+            loadCalendar();
+        });
     </script>
 </body>
 </html>
