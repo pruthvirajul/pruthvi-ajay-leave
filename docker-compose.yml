@@ -6,7 +6,7 @@ services:
     container_name: postgres-leave
     restart: always
     ports:
-      - "5438:5432"
+      - "5413:5432"
     environment:
       POSTGRES_USER: postgres
       POSTGRES_PASSWORD: admin123
@@ -20,7 +20,7 @@ services:
     container_name: backend-leave
     restart: always
     ports:
-      - "3008:3008"
+      - "3413:3413"
     depends_on:
       - postgres
     environment:
@@ -34,13 +34,13 @@ services:
     build: ./Fronted
     container_name: frontend-service
     ports:
-      - "8022:80"
+      - "8037:80"
 
   hr_page:
     build: ./HR_Page
     container_name: hrpage-service
     ports:
-      - "8023:80"
+      - "8038:80"
 
 volumes:
   pgdata:
