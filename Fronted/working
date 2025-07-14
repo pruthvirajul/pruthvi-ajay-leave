@@ -17,6 +17,7 @@
             flex-direction: column;
             justify-content: flex-start;
             align-items: center;
+          
             color: #333;
             background-color: #ffffff;
             min-height: 100vh;
@@ -32,6 +33,7 @@
             overflow: hidden;
             display: flex;
             width: 100%;
+           
             align-items: center;
             justify-content: center;
             flex-direction: column;
@@ -428,11 +430,11 @@
         }
 
         .calendar .day.other-month {
-            color: transparent;
+            color:transparent;
         }
-
-        .calendar .day.other-month:hover {
+        .calendar.day.other-month :hover{
             background-color: none;
+
         }
 
         .calendar .day[data-tooltip]:hover::after {
@@ -1059,13 +1061,13 @@
                     <p id="error-message-emp-id" class="error-message"></p>
                 </div>
 
-               <div class="form-group">
-    <label for="email">Email Address:</label>
-    <input id="email" type="email" placeholder="Enter your Email ID" required minlength="8" maxlength="50"
-           pattern="^[a-zA-Z][a-zA-Z0-9._-]{1,}[a-zA-Z]@astrolitetech\.com$"
-           title="Email must start with a letter, end with a letter, and have a domain of @astrolitetech.com">
-    <p id="error-message-email" class="error-message"></p>
-</div>
+                <div class="form-group">
+                    <label for="email">Email Address:</label>
+                    <input id="email" type="email" placeholder="Enter your Email ID" required minlength="8" maxlength="50"
+                           pattern="^[a-zA-Z][a-zA-Z0-9._-]{1,}[a-zA-Z]@(?:gmail\.com|outlook\.com|[\w-]+\.(?:co|in|org))$"
+                           title="Email must start with a letter, end with a letter, and have a domain of gmail.com, outlook.com, or *.co/in/org">
+                    <p id="error-message-email" class="error-message"></p>
+                </div>
 
                 <div class="form-group">
                     <label for="leave-type">Type of Leave:</label>
@@ -1073,9 +1075,6 @@
                         <option value="sick">Sick Leave</option>
                         <option value="casual">Casual Leave</option>
                         <option value="earned">Earned Leave</option>
-                        <option value="paternity">Paternity Leave</option>
-                        <option value="maternity">Maternity Leave</option>
-                        <option value="marriage">Marriage Leave</option>
                     </select>
                 </div>
 
@@ -1117,7 +1116,7 @@
                 <div>
                     <img src="https://cdn-icons-png.freepik.com/512/10723/10723284.png" alt="Allocated Leaves Icon">
                     <h3>Allocated Leaves</h3>
-                    <p id="allocated-leaves">45</p>
+                    <p id="allocated-leaves">30</p>
                 </div>
                 <div>
                     <img src="https://cdn-icons-png.flaticon.com/512/3387/3387188.png" alt="Remaining Leaves Icon">
@@ -1194,671 +1193,637 @@
 
     <script>
         const API_BASE_URL = 'http://44.223.23.145:3413';
-let currentMonth = new Date().getMonth();
-let currentYear = new Date().getFullYear();
-let cachedLeaves = []; // Cache for leave data
-let lastEmpId = null; // Track last fetched empId
-let pendingLeaveDetails = null; // Store leave details temporarily
+        let currentMonth = new Date().getMonth();
+        let currentYear = new Date().getFullYear();
+        let cachedLeaves = []; // Cache for leave data
+        let lastEmpId = null; // Track last fetched empId
+        let pendingLeaveDetails = null; // Store leave details temporarily
 
-// Debounce utility
-function debounce(func, wait) {
-    let timeout;
-    return function (...args) {
-        clearTimeout(timeout);
-        timeout = setTimeout(() => func.apply(this, args), wait);
-    };
-}
-
-document.addEventListener('DOMContentLoaded', function () {
-    // Set up date constraints
-    const today = new Date();
-    const threeMonthsAgo = new Date();
-    threeMonthsAgo.setMonth(today.getMonth() - 3);
-
-    const oneYearFromNow = new Date();
-    oneYearFromNow.setFullYear(today.getFullYear() + 1);
-
-    // Format dates for input min/max attributes (YYYY-MM-DD)
-    const formatDate = (date) => date.toISOString().split('T')[0];
-
-    // Set date constraints
-    const fromDateInput = document.getElementById('from-date');
-    const toDateInput = document.getElementById('to-date');
-
-    fromDateInput.min = formatDate(threeMonthsAgo);
-    fromDateInput.max = formatDate(oneYearFromNow);
-
-    toDateInput.min = formatDate(threeMonthsAgo);
-    toDateInput.max = formatDate(oneYearFromNow);
-
-    // Initialize form
-    initializeForm();
-    loadCalendar(); // Load calendar without leaves initially
-    // Load leaves only when empId is valid
-    document.getElementById('emp-id').addEventListener('change', debounce(() => {
-        if (validateEmpId()) {
-            fetchAndUpdateLeaves();
-            updateLeaveStats();
+        // Debounce utility
+        function debounce(func, wait) {
+            let timeout;
+            return function (...args) {
+                clearTimeout(timeout);
+                timeout = setTimeout(() => func.apply(this, args), wait);
+            };
         }
-    }, 500));
 
-    // Calendar navigation
-    document.getElementById('prev-month').addEventListener('click', () => {
-        currentMonth--;
-        if (currentMonth < 0) {
-            currentMonth = 11;
-            currentYear--;
-        }
-        loadCalendar();
-    });
+        document.addEventListener('DOMContentLoaded', function () {
+            // Set up date constraints
+            const today = new Date();
+            const threeMonthsAgo = new Date();
+            threeMonthsAgo.setMonth(today.getMonth() - 3);
 
-    document.getElementById('next-month').addEventListener('click', () => {
-        currentMonth++;
-        if (currentMonth > 11) {
-            currentMonth = 0;
-            currentYear++;
-        }
-        loadCalendar();
-    });
-});
+            const oneYearFromNow = new Date();
+            oneYearFromNow.setFullYear(today.getFullYear() + 1);
 
-function initializeForm() {
-    // Set up event listeners for validation
-    document.getElementById('name').addEventListener('input', validateName);
-    document.getElementById('emp-id').addEventListener('input', validateEmpId);
-    document.getElementById('email').addEventListener('input', validateEmail);
-    document.getElementById('reason').addEventListener('input', validateReason);
-    document.getElementById('from-date').addEventListener('change', validateFromDate);
-    document.getElementById('to-date').addEventListener('change', validateToDate);
-    document.getElementById('from-hour').addEventListener('change', validateFromHour);
-    document.getElementById('to-hour').addEventListener('change', validateToHour);
+            // Format dates for input min/max attributes (YYYY-MM-DD)
+            const formatDate = (date) => date.toISOString().split('T')[0];
 
-    // Toggle hour selection based on date range
-    const fromDateInput = document.getElementById('from-date');
-    const toDateInput = document.getElementById('to-date');
-    const hourSelection = document.querySelectorAll('#hour-selection');
+            // Set date constraints
+            const fromDateInput = document.getElementById('from-date');
+            const toDateInput = document.getElementById('to-date');
 
-    function toggleHourSelection() {
-        if (fromDateInput.value === toDateInput.value) {
-            hourSelection.forEach(el => el.style.display = 'block');
-        } else {
-            hourSelection.forEach(el => el.style.display = 'none');
-            document.getElementById('from-hour').value = '';
-            document.getElementById('to-hour').value = '';
-        }
-    }
+            fromDateInput.min = formatDate(threeMonthsAgo);
+            fromDateInput.max = formatDate(oneYearFromNow);
 
-    fromDateInput.addEventListener('change', toggleHourSelection);
-    toDateInput.addEventListener('change', toggleHourSelection);
+            toDateInput.min = formatDate(threeMonthsAgo);
+            toDateInput.max = formatDate(oneYearFromNow);
 
-    // Form submission with confirmation modal
-    document.getElementById('leave-form').addEventListener('submit', function (event) {
-        event.preventDefault();
-        if (!validateForm()) return;
+            // Initialize form
+            initializeForm();
+            loadCalendar(); // Load calendar without leaves initially
+            // Load leaves only when empId is valid
+            document.getElementById('emp-id').addEventListener('change', debounce(() => {
+                if (validateEmpId()) {
+                    fetchAndUpdateLeaves();
+                    updateLeaveStats();
+                }
+            }, 500));
 
-        // Store leave details
-        pendingLeaveDetails = {
-            name: document.getElementById('name').value,
-            emp_id: document.getElementById('emp-id').value,
-            email: document.getElementById('email').value,
-            leave_type: document.getElementById('leave-type').value,
-            from_date: document.getElementById('from-date').value,
-            to_date: document.getElementById('to-date').value,
-            from_hour: document.getElementById('from-hour').value || null,
-            to_hour: document.getElementById('to-hour').value || null,
-            reason: document.getElementById('reason').value
-        };
-
-        // Check for overlapping approved leaves
-        checkOverlappingLeaves(pendingLeaveDetails);
-    });
-
-    // Confirmation modal buttons
-    document.getElementById('confirm-submit').addEventListener('click', function () {
-        document.getElementById('confirmation-modal').style.display = 'none';
-        if (pendingLeaveDetails) {
-            submitLeaveRequest(pendingLeaveDetails);
-        }
-    });
-
-    document.getElementById('cancel-submit').addEventListener('click', function () {
-        document.getElementById('confirmation-modal').style.display = 'none';
-        pendingLeaveDetails = null;
-    });
-
-    // Modal close functionality for details modal
-    document.querySelectorAll('.close').forEach(closeBtn => {
-        closeBtn.addEventListener('click', function () {
-            this.closest('.modal').style.display = 'none';
-        });
-    });
-
-    window.addEventListener('click', function (event) {
-        if (event.target === document.getElementById('modal')) {
-            document.getElementById('modal').style.display = 'none';
-        }
-        if (event.target === document.getElementById('confirmation-modal')) {
-            document.getElementById('confirmation-modal').style.display = 'none';
-            pendingLeaveDetails = null;
-        }
-    });
-
-    // View All modal event listeners
-    document.getElementById('view-all-btn').addEventListener('click', () => {
-        document.getElementById('all-leaves-modal').style.display = 'flex';
-    });
-
-    document.querySelector('.all-leaves-close').addEventListener('click', () => {
-        document.getElementById('all-leaves-modal').style.display = 'none';
-    });
-
-    window.addEventListener('click', (event) => {
-        if (event.target === document.getElementById('all-leaves-modal')) {
-            document.getElementById('all-leaves-modal').style.display = 'none';
-        }
-    });
-}
-
-function checkOverlappingLeaves(leaveDetails) {
-    fetch(`${API_BASE_URL}/api/leaves/${leaveDetails.emp_id}`)
-        .then(response => {
-            if (!response.ok) {
-                throw new Error('Failed to fetch existing leaves');
-            }
-            return response.json();
-        })
-        .then(leaves => {
-            const newFromDate = new Date(leaveDetails.from_date);
-            const newToDate = new Date(leaveDetails.to_date);
-
-            const hasOverlap = leaves.some(leave => {
-                if (leave.status !== 'Approved') return false;
-                const existingFromDate = new Date(leave.from_date);
-                const existingToDate = new Date(leave.to_date);
-                return !(newToDate < existingFromDate || newFromDate > existingToDate);
+            // Calendar navigation
+            document.getElementById('prev-month').addEventListener('click', () => {
+                currentMonth--;
+                if (currentMonth < 0) {
+                    currentMonth = 11;
+                    currentYear--;
+                }
+                loadCalendar();
             });
 
-            if (hasOverlap) {
-                showPopup('Cannot apply leave: Overlaps with existing approved leave', false);
-                pendingLeaveDetails = null;
-            } else {
-                // Show confirmation modal if no overlap
+            document.getElementById('next-month').addEventListener('click', () => {
+                currentMonth++;
+                if (currentMonth > 11) {
+                    currentMonth = 0;
+                    currentYear++;
+                }
+                loadCalendar();
+            });
+        });
+
+        function initializeForm() {
+            // Set up event listeners for validation
+            document.getElementById('name').addEventListener('input', validateName);
+            document.getElementById('emp-id').addEventListener('input', validateEmpId);
+            document.getElementById('email').addEventListener('input', validateEmail);
+            document.getElementById('reason').addEventListener('input', validateReason);
+            document.getElementById('from-date').addEventListener('change', validateFromDate);
+            document.getElementById('to-date').addEventListener('change', validateToDate);
+            document.getElementById('from-hour').addEventListener('change', validateFromHour);
+            document.getElementById('to-hour').addEventListener('change', validateToHour);
+
+            // Toggle hour selection based on date range
+            const fromDateInput = document.getElementById('from-date');
+            const toDateInput = document.getElementById('to-date');
+            const hourSelection = document.querySelectorAll('#hour-selection');
+
+            function toggleHourSelection() {
+                if (fromDateInput.value === toDateInput.value) {
+                    hourSelection.forEach(el => el.style.display = 'block');
+                } else {
+                    hourSelection.forEach(el => el.style.display = 'none');
+                    document.getElementById('from-hour').value = '';
+                    document.getElementById('to-hour').value = '';
+                }
+            }
+
+            fromDateInput.addEventListener('change', toggleHourSelection);
+            toDateInput.addEventListener('change', toggleHourSelection);
+
+            // Form submission with confirmation modal
+            document.getElementById('leave-form').addEventListener('submit', function (event) {
+                event.preventDefault();
+                if (!validateForm()) return;
+
+                // Store leave details
+                pendingLeaveDetails = {
+                    name: document.getElementById('name').value,
+                    emp_id: document.getElementById('emp-id').value,
+                    email: document.getElementById('email').value,
+                    leave_type: document.getElementById('leave-type').value,
+                    from_date: document.getElementById('from-date').value,
+                    to_date: document.getElementById('to-date').value,
+                    from_hour: document.getElementById('from-hour').value || null,
+                    to_hour: document.getElementById('to-hour').value || null,
+                    reason: document.getElementById('reason').value
+                };
+
+                // Show confirmation modal
                 document.getElementById('confirmation-modal').style.display = 'flex';
+            });
+
+            // Confirmation modal buttons
+            document.getElementById('confirm-submit').addEventListener('click', function () {
+                document.getElementById('confirmation-modal').style.display = 'none';
+                if (pendingLeaveDetails) {
+                    submitLeaveRequest(pendingLeaveDetails);
+                }
+            });
+
+            document.getElementById('cancel-submit').addEventListener('click', function () {
+                document.getElementById('confirmation-modal').style.display = 'none';
+                pendingLeaveDetails = null;
+            });
+
+            // Modal close functionality for details modal
+            document.querySelectorAll('.close').forEach(closeBtn => {
+                closeBtn.addEventListener('click', function () {
+                    this.closest('.modal').style.display = 'none';
+                });
+            });
+
+            window.addEventListener('click', function (event) {
+                if (event.target === document.getElementById('modal')) {
+                    document.getElementById('modal').style.display = 'none';
+                }
+                if (event.target === document.getElementById('confirmation-modal')) {
+                    document.getElementById('confirmation-modal').style.display = 'none';
+                    pendingLeaveDetails = null;
+                }
+            });
+
+            // View All modal event listeners
+            document.getElementById('view-all-btn').addEventListener('click', () => {
+                document.getElementById('all-leaves-modal').style.display = 'flex';
+            });
+
+            document.querySelector('.all-leaves-close').addEventListener('click', () => {
+                document.getElementById('all-leaves-modal').style.display = 'none';
+            });
+
+            window.addEventListener('click', (event) => {
+                if (event.target === document.getElementById('all-leaves-modal')) {
+                    document.getElementById('all-leaves-modal').style.display = 'none';
+                }
+            });
+        }
+
+        function submitLeaveRequest(leaveDetails) {
+            fetch(`${API_BASE_URL}/api/leaves`, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(leaveDetails)
+            })
+                .then(response => {
+                    if (!response.ok) {
+                        return response.json().then(err => { throw new Error(err.error || 'Unknown server error'); });
+                    }
+                    return response.json();
+                })
+                .then(() => {
+                    showPopup('Leave request submitted successfully', true);
+                    document.getElementById('leave-form').reset();
+                    document.querySelectorAll('#hour-selection').forEach(el => el.style.display = 'none');
+                    cachedLeaves = []; // Clear cache to force refresh
+                    fetchAndUpdateLeaves();
+                    updateLeaveStats();
+                    pendingLeaveDetails = null;
+                })
+                .catch(error => {
+                    console.error('Error submitting leave:', error);
+                    showPopup(error.message || 'Error submitting leave request', false);
+                    pendingLeaveDetails = null;
+                });
+        }
+
+        // Validation functions
+        function validateName() {
+            const nameInput = document.getElementById('name');
+            const errorMessage = document.getElementById('error-message-name');
+            const regex = /^[A-Za-z]+(?:\.[A-Za-z]+)*(?: [A-Za-z]+)*(?:\.[A-Za-z]+){0,3}$/;
+
+            if (!regex.test(nameInput.value)) {
+                errorMessage.textContent = "Invalid name. No leading/trailing spaces, no consecutive spaces, max 8 spaces, max 3 periods.";
+                errorMessage.style.display = 'block';
+                return false;
+            } else {
+                errorMessage.style.display = 'none';
+                return true;
             }
-        })
-        .catch(error => {
-            console.error('Error checking overlapping leaves:', error);
-            showPopup('Error checking leave conflicts', false);
-            pendingLeaveDetails = null;
-        });
-}
+        }
 
-function submitLeaveRequest(leaveDetails) {
-    fetch(`${API_BASE_URL}/api/leaves`, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(leaveDetails)
-    })
-        .then(response => {
-            if (!response.ok) {
-                return response.json().then(err => { throw new Error(err.error || 'Unknown server error'); });
+        function validateEmpId() {
+            const empIdInput = document.getElementById('emp-id');
+            const errorMessage = document.getElementById('error-message-emp-id');
+            const regex = /^[ATS]{3}0(?!000)[0-9]{3}$/;
+
+            if (!regex.test(empIdInput.value)) {
+                errorMessage.textContent = "Please enter a valid Employee ID (ATS0 followed by 3 digits, not all zeros).";
+                errorMessage.style.display = 'block';
+                return false;
+            } else {
+                errorMessage.style.display = 'none';
+                return true;
             }
-            return response.json();
-        })
-        .then(() => {
-            showPopup('Leave request submitted successfully', true);
-            document.getElementById('leave-form').reset();
-            document.querySelectorAll('#hour-selection').forEach(el => el.style.display = 'none');
-            cachedLeaves = []; // Clear cache to force refresh
-            fetchAndUpdateLeaves();
-            updateLeaveStats();
-            pendingLeaveDetails = null;
-        })
-        .catch(error => {
-            console.error('Error submitting leave:', error);
-            showPopup(error.message || 'Error submitting leave request', false);
-            pendingLeaveDetails = null;
-        });
-}
+        }
 
-// Validation functions
-function validateName() {
-    const nameInput = document.getElementById('name');
-    const errorMessage = document.getElementById('error-message-name');
-    const regex = /^[A-Za-z]+(?:\.[A-Za-z]+)*(?: [A-Za-z]+)*(?:\.[A-Za-z]+){0,3}$/;
+        function validateEmail() {
+            const emailInput = document.getElementById('email');
+            const errorMessage = document.getElementById('error-message-email');
+            const regex = /^[a-zA-Z][a-zA-Z0-9._-]{1,}[a-zA-Z]@(?:gmail\.com|outlook\.com|[\w-]+\.(?:co|in|org))$/;
 
-    if (!regex.test(nameInput.value)) {
-        errorMessage.textContent = "Invalid name. No leading/trailing spaces, no consecutive spaces, max 8 spaces, max 3 periods.";
-        errorMessage.style.display = 'block';
-        return false;
-    } else {
-        errorMessage.style.display = 'none';
-        return true;
-    }
-}
-
-function validateEmpId() {
-    const empIdInput = document.getElementById('emp-id');
-    const errorMessage = document.getElementById('error-message-emp-id');
-    const regex = /^[ATS]{3}0(?!000)[0-9]{3}$/;
-
-    if (!regex.test(empIdInput.value)) {
-        errorMessage.textContent = "Please enter a valid Employee ID (ATS0 followed by 3 digits, not all zeros).";
-        errorMessage.style.display = 'block';
-        return false;
-    } else {
-        errorMessage.style.display = 'none';
-        return true;
-    }
-}
-
-function validateEmail() {
-    const emailInput = document.getElementById('email');
-    const errorMessage = document.getElementById('error-message-email');
-    const regex = /^[a-zA-Z][a-zA-Z0-9._-]{1,}[a-zA-Z]@astrolitetech\.com$/;
-
-    if (!regex.test(emailInput.value)) {
-        errorMessage.textContent = "Email must start with a letter, end with a letter, and have a domain of @astrolitetech.com.";
-        errorMessage.style.display = 'block';
-        return false;
-    } else {
-        errorMessage.style.display = 'none';
-        return true;
-    }
-}
-
-function validateReason() {
-    const reasonInput = document.getElementById('reason');
-    const errorMessage = document.getElementById('error-message-reason');
-    const pattern = /^[A-Za-z][A-Za-z0-9\s,.]*$/;
-    const invalidConsecutive = /(,{2,}|\.{2,}|\s{2,}|,\s,|\.\s\.|,\s\.|\.\s,)/;
-
-    errorMessage.textContent = '';
-    errorMessage.style.display = 'none';
-
-    if (reasonInput.value.length < 5 || reasonInput.value.length > 100) {
-        errorMessage.textContent = "Reason must be between 5 and 100 characters.";
-        errorMessage.style.display = 'block';
-        return false;
-    }
-
-    if (!pattern.test(reasonInput.value)) {
-        errorMessage.textContent = "Reason must start with a letter and can only contain letters, numbers, spaces, commas, and periods.";
-        errorMessage.style.display = 'block';
-        return false;
-    }
-
-    if (invalidConsecutive.test(reasonInput.value)) {
-        errorMessage.textContent = "Reason contains invalid consecutive characters (e.g., ',,' or '..').";
-        errorMessage.style.display = 'block';
-        return false;
-    }
-
-    return true;
-}
-
-function validateFromDate() {
-    const fromDateInput = document.getElementById('from-date');
-    const errorMessage = document.getElementById('error-message-from-date');
-    const today = new Date();
-    const threeMonthsAgo = new Date();
-    threeMonthsAgo.setMonth(today.getMonth() - 3);
-    const oneYearFromNow = new Date();
-    oneYearFromNow.setFullYear(today.getFullYear() + 1);
-
-    const selectedDate = new Date(fromDateInput.value);
-
-    if (selectedDate < threeMonthsAgo || selectedDate > oneYearFromNow) {
-        errorMessage.textContent = `From Date must be between ${threeMonthsAgo.toLocaleDateString()} and ${oneYearFromNow.toLocaleDateString()}.`;
-        errorMessage.style.display = 'block';
-        return false;
-    } else {
-        errorMessage.style.display = 'none';
-        return true;
-    }
-}
-
-function validateToDate() {
-    const fromDateInput = document.getElementById('from-date');
-    const toDateInput = document.getElementById('to-date');
-    const errorMessage = document.getElementById('error-message-to-date');
-    const today = new Date();
-    const oneYearFromNow = new Date();
-    oneYearFromNow.setFullYear(today.getFullYear() + 1);
-
-    const fromDate = new Date(fromDateInput.value);
-    const toDate = new Date(toDateInput.value);
-
-    if (toDate < fromDate) {
-        errorMessage.textContent = "To Date cannot be less than From Date.";
-        errorMessage.style.display = 'block';
-        return false;
-    } else if (toDate > oneYearFromNow) {
-        errorMessage.textContent = `To Date cannot be more than one year from now (${oneYearFromNow.toLocaleDateString()}).`;
-        errorMessage.style.display = 'block';
-        return false;
-    } else {
-        errorMessage.style.display = 'none';
-        return true;
-    }
-}
-
-function validateFromHour() {
-    const fromHourInput = document.getElementById('from-hour');
-    const toHourInput = document.getElementById('to-hour');
-    const errorMessage = document.getElementById('error-message-from-hour');
-
-    const fromHour = fromHourInput.value;
-    const toHour = toHourInput.value;
-
-    if (fromHour && toHour && fromHour >= toHour) {
-        errorMessage.textContent = "From Hour must be less than To Hour.";
-        errorMessage.style.display = 'block';
-        return false;
-    } else {
-        errorMessage.style.display = 'none';
-        return true;
-    }
-}
-
-function validateToHour() {
-    const fromHourInput = document.getElementById('from-hour');
-    const toHourInput = document.getElementById('to-hour');
-    const errorMessage = document.getElementById('error-message-to-hour');
-
-    const fromHour = fromHourInput.value;
-    const toHour = toHourInput.value;
-
-    if (fromHour && toHour && toHour <= fromHour) {
-        errorMessage.textContent = "To Hour must be at least 30 minutes after From Hour.";
-        errorMessage.style.display = 'block';
-        return false;
-    } else {
-        errorMessage.style.display = 'none';
-        return true;
-    }
-}
-
-function validateForm() {
-    const isNameValid = validateName();
-    const isEmpIdValid = validateEmpId();
-    const isEmailValid = validateEmail();
-    const isReasonValid = validateReason();
-    const isFromDateValid = validateFromDate();
-    const isToDateValid = validateToDate();
-    const isFromHourValid = validateFromHour();
-    const isToHourValid = validateToHour();
-
-    return isNameValid && isEmpIdValid && isEmailValid && isReasonValid &&
-           isFromDateValid && isToDateValid && isFromHourValid && isToHourValid;
-}
-
-function updateLeaveStats() {
-    const empId = document.getElementById('emp-id').value;
-    if (!empId || !validateEmpId()) return;
-    fetch(`${API_BASE_URL}/api/leave-stats/${empId}`)
-        .then(response => {
-            if (!response.ok) {
-                return response.json().then(err => { throw new Error(err.error || 'Failed to fetch leave stats'); });
+            if (!regex.test(emailInput.value)) {
+                errorMessage.textContent = "Email must start with a letter, end with a letter, and have a domain of gmail.com, outlook.com, or *.co/in/org.";
+                errorMessage.style.display = 'block';
+                return false;
+            } else {
+                errorMessage.style.display = 'none';
+                return true;
             }
-            return response.json();
-        })
-        .then(data => {
-            document.getElementById('allocated-leaves').textContent = data.allocatedLeaves;
-            document.getElementById('current-leaves').textContent = data.remainingLeaves;
-        })
-        .catch(error => {
-            console.error('Error fetching leave stats:', error);
-            showPopup(error.message || 'Error fetching leave stats', false);
-        });
-}
+        }
 
-function fetchAndUpdateLeaves() {
-    const empId = document.getElementById('emp-id').value;
-    if (!empId || !validateEmpId()) {
-        renderLeaves([]);
-        return;
-    }
+        function validateReason() {
+            const reasonInput = document.getElementById('reason');
+            const errorMessage = document.getElementById('error-message-reason');
+            const pattern = /^[A-Za-z][A-Za-z0-9\s,.]*$/;
+            const invalidConsecutive = /(,{2,}|\.{2,}|\s{2,}|,\s,|\.\s\.|,\s\.|\.\s,)/;
 
-    // Show loading state
-    const leaveCardsContainer = document.getElementById('leave-cards');
-    leaveCardsContainer.innerHTML = `
-        <div class="loading-state">
-            <img src="https://cdn-icons-png.flaticon.com/512/4076/4076478.png" alt="Loading" class="no-data-img">
-            <p>Loading leave requests...</p>
-        </div>
-    `;
+            errorMessage.textContent = '';
+            errorMessage.style.display = 'none';
 
-    if (empId === lastEmpId && cachedLeaves.length > 0) {
-        // Use cached data if empId hasn't changed
-        renderLeaves(cachedLeaves);
-        loadCalendar();
-        return;
-    }
-
-    fetch(`${API_BASE_URL}/api/leaves/${empId}`)
-        .then(response => {
-            if (!response.ok) {
-                return response.json().then(err => { throw new Error(err.error || 'Failed to fetch leaves'); });
+            if (reasonInput.value.length < 5 || reasonInput.value.length > 100) {
+                errorMessage.textContent = "Reason must be between 5 and 100 characters.";
+                errorMessage.style.display = 'block';
+                return false;
             }
-            return response.json();
-        })
-        .then(leaves => {
-            cachedLeaves = leaves;
-            lastEmpId = empId;
-            renderLeaves(leaves);
-            loadCalendar();
-        })
-        .catch(error => {
-            console.error('Error loading leaves:', error);
-            renderLeaves([]);
-            showPopup(error.message || 'Error loading leave requests', false);
-        });
-}
 
-function renderLeaves(leaves) {
-    const leaveCardsContainer = document.getElementById('leave-cards');
-    const allLeavesContainer = document.getElementById('all-leaves-container');
-    leaveCardsContainer.innerHTML = '';
-    allLeavesContainer.innerHTML = '';
+            if (!pattern.test(reasonInput.value)) {
+                errorMessage.textContent = "Reason must start with a letter and can only contain letters, numbers, spaces, commas, and periods.";
+                errorMessage.style.display = 'block';
+                return false;
+            }
 
-    if (leaves.length === 0) {
-        leaveCardsContainer.innerHTML = `
-            <div class="no-data">
-                <img src="https://cdn-icons-png.flaticon.com/512/4076/4076478.png" alt="No Data" class="no-data-img">
-                <p>No leave requests found.</p>
-            </div>
-        `;
-        document.getElementById('view-all-btn').style.display = 'none';
-        return;
-    }
+            if (invalidConsecutive.test(reasonInput.value)) {
+                errorMessage.textContent = "Reason contains invalid consecutive characters (e.g., ',,' or '..').";
+                errorMessage.style.display = 'block';
+                return false;
+            }
 
-    // Sort leaves by date (newest first)
-    leaves.sort((a, b) => new Date(b.from_date) - new Date(a.from_date));
+            return true;
+        }
 
-    // Show only 3 most recent leaves in main view
-    const recentLeaves = leaves.slice(0, 3);
-    recentLeaves.forEach(leave => {
-        leaveCardsContainer.appendChild(createLeaveCard(leave));
-    });
+        function validateFromDate() {
+            const fromDateInput = document.getElementById('from-date');
+            const errorMessage = document.getElementById('error-message-from-date');
+            const today = new Date();
+            const threeMonthsAgo = new Date();
+            threeMonthsAgo.setMonth(today.getMonth() - 3);
+            const oneYearFromNow = new Date();
+            oneYearFromNow.setFullYear(today.getFullYear() + 1);
 
-    // Add all leaves to the modal
-    leaves.forEach(leave => {
-        allLeavesContainer.appendChild(createLeaveCard(leave));
-    });
+            const selectedDate = new Date(fromDateInput.value);
 
-    // Show "View All" button if there are more than 3 leaves
-    document.getElementById('view-all-btn').style.display = 
-        leaves.length > 3 ? 'block' : 'none';
-}
+            if (selectedDate < threeMonthsAgo || selectedDate > oneYearFromNow) {
+                errorMessage.textContent = `From Date must be between ${threeMonthsAgo.toLocaleDateString()} and ${oneYearFromNow.toLocaleDateString()}.`;
+                errorMessage.style.display = 'block';
+                return false;
+            } else {
+                errorMessage.style.display = 'none';
+                return true;
+            }
+        }
 
-function createLeaveCard(leave) {
-    const card = document.createElement('div');
-    card.className = 'leave-card';
-    const statusClass = `status-${leave.status.toLowerCase()}`;
-    const initials = leave.name.split(' ').map(n => n[0]).join('').toUpperCase();
+        function validateToDate() {
+            const fromDateInput = document.getElementById('from-date');
+            const toDateInput = document.getElementById('to-date');
+            const errorMessage = document.getElementById('error-message-to-date');
+            const today = new Date();
+            const oneYearFromNow = new Date();
+            oneYearFromNow.setFullYear(today.getFullYear() + 1);
 
-    card.innerHTML = `
-        <div class="leave-card-header">
-            <div class="leave-card-avatar">${initials}</div>
-            <div>
+            const fromDate = new Date(fromDateInput.value);
+            const toDate = new Date(toDateInput.value);
+
+            if (toDate < fromDate) {
+                errorMessage.textContent = "To Date cannot be less than From Date.";
+                errorMessage.style.display = 'block';
+                return false;
+            } else if (toDate > oneYearFromNow) {
+                errorMessage.textContent = `To Date cannot be more than one year from now (${oneYearFromNow.toLocaleDateString()}).`;
+                errorMessage.style.display = 'block';
+                return false;
+            } else {
+                errorMessage.style.display = 'none';
+                return true;
+            }
+        }
+
+        function validateFromHour() {
+            const fromHourInput = document.getElementById('from-hour');
+            const toHourInput = document.getElementById('to-hour');
+            const errorMessage = document.getElementById('error-message-from-hour');
+
+            const fromHour = fromHourInput.value;
+            const toHour = toHourInput.value;
+
+            if (fromHour && toHour && fromHour >= toHour) {
+                errorMessage.textContent = "From Hour must be less than To Hour.";
+                errorMessage.style.display = 'block';
+                return false;
+            } else {
+                errorMessage.style.display = 'none';
+                return true;
+            }
+        }
+
+        function validateToHour() {
+            const fromHourInput = document.getElementById('from-hour');
+            const toHourInput = document.getElementById('to-hour');
+            const errorMessage = document.getElementById('error-message-to-hour');
+
+            const fromHour = fromHourInput.value;
+            const toHour = toHourInput.value;
+
+            if (fromHour && toHour && toHour <= fromHour) {
+                errorMessage.textContent = "To Hour must be at least 30 minutes after From Hour.";
+                errorMessage.style.display = 'block';
+                return false;
+            } else {
+                errorMessage.style.display = 'none';
+                return true;
+            }
+        }
+
+        function validateForm() {
+            const isNameValid = validateName();
+            const isEmpIdValid = validateEmpId();
+            const isEmailValid = validateEmail();
+            const isReasonValid = validateReason();
+            const isFromDateValid = validateFromDate();
+            const isToDateValid = validateToDate();
+            const isFromHourValid = validateFromHour();
+            const isToHourValid = validateToHour();
+
+            return isNameValid && isEmpIdValid && isEmailValid && isReasonValid &&
+                   isFromDateValid && isToDateValid && isFromHourValid && isToHourValid;
+        }
+
+        function updateLeaveStats() {
+            const empId = document.getElementById('emp-id').value;
+            if (!empId || !validateEmpId()) return;
+            fetch(`${API_BASE_URL}/api/leave-stats/${empId}`)
+                .then(response => {
+                    if (!response.ok) {
+                        return response.json().then(err => { throw new Error(err.error || 'Failed to fetch leave stats'); });
+                    }
+                    return response.json();
+                })
+                .then(data => {
+                    document.getElementById('allocated-leaves').textContent = data.allocatedLeaves;
+                    document.getElementById('current-leaves').textContent = data.remainingLeaves;
+                })
+                .catch(error => {
+                    console.error('Error fetching leave stats:', error);
+                    showPopup(error.message || 'Error fetching leave stats', false);
+                });
+        }
+
+        function fetchAndUpdateLeaves() {
+            const empId = document.getElementById('emp-id').value;
+            if (!empId || !validateEmpId()) {
+                renderLeaves([]);
+                return;
+            }
+
+            // Show loading state
+            const leaveCardsContainer = document.getElementById('leave-cards');
+            leaveCardsContainer.innerHTML = `
+                <div class="loading-state">
+                    <img src="https://cdn-icons-png.flaticon.com/512/4076/4076478.png" alt="Loading" class="no-data-img">
+                    <p>Loading leave requests...</p>
+                </div>
+            `;
+
+            if (empId === lastEmpId && cachedLeaves.length > 0) {
+                // Use cached data if empId hasn't changed
+                renderLeaves(cachedLeaves);
+                loadCalendar();
+                return;
+            }
+
+            fetch(`${API_BASE_URL}/api/leaves/${empId}`)
+                .then(response => {
+                    if (!response.ok) {
+                        return response.json().then(err => { throw new Error(err.error || 'Failed to fetch leaves'); });
+                    }
+                    return response.json();
+                })
+                .then(leaves => {
+                    cachedLeaves = leaves;
+                    lastEmpId = empId;
+                    renderLeaves(leaves);
+                    loadCalendar();
+                })
+                .catch(error => {
+                    console.error('Error loading leaves:', error);
+                    renderLeaves([]);
+                    showPopup(error.message || 'Error loading leave requests', false);
+                });
+        }
+
+        function renderLeaves(leaves) {
+            const leaveCardsContainer = document.getElementById('leave-cards');
+            const allLeavesContainer = document.getElementById('all-leaves-container');
+            leaveCardsContainer.innerHTML = '';
+            allLeavesContainer.innerHTML = '';
+
+             if (leaves.length === 0) {
+                leaveCardsContainer.innerHTML = `
+                    <div class="no-data">
+                        <img src="https://cdn-icons-png.flaticon.com/512/4076/4076478.png" alt="No Data" class="no-data-img">
+                        <p>No leave requests found.</p>
+                    </div>
+                `;
+                document.getElementById('view-all-btn').style.display = 'none';
+                return;
+            }
+
+            // Sort leaves by date (newest first)
+            leaves.sort((a, b) => new Date(b.from_date) - new Date(a.from_date));
+
+            // Show only 3 most recent leaves in main view
+            const recentLeaves = leaves.slice(0, 3);
+            recentLeaves.forEach(leave => {
+                leaveCardsContainer.appendChild(createLeaveCard(leave));
+            });
+
+            // Add all leaves to the modal
+            leaves.forEach(leave => {
+                allLeavesContainer.appendChild(createLeaveCard(leave));
+            });
+
+            // Show "View All" button if there are more than 3 leaves
+            document.getElementById('view-all-btn').style.display = 
+                leaves.length > 3 ? 'block' : 'none';
+        }
+
+        function createLeaveCard(leave) {
+            const card = document.createElement('div');
+            card.className = 'leave-card';
+            const statusClass = `status-${leave.status.toLowerCase()}`;
+            const initials = leave.name.split(' ').map(n => n[0]).join('').toUpperCase();
+
+            card.innerHTML = `
+                <div class="leave-card-header">
+                    <div class="leave-card-avatar">${initials}</div>
+                    <div>
+                        <h3 class="leave-card-title">${leave.name}</h3>
+                        <p class="leave-card-type">${leave.leave_type}</p>
+                    </div>
+                </div>
+                <div class="leave-card-details">
+                    <div class="leave-card-detail">
+                        <span class="leave-card-label">Period:</span>
+                        <span class="leave-card-value">${formatDisplayDate(leave.from_date)} - ${formatDisplayDate(leave.to_date)}</span>
+                    </div>
+                    ${leave.from_hour && leave.to_hour ? `
+                    <div class="leave-card-detail">
+                        <span class="leave-card-label">Time:</span>
+                        <span class="leave-card-value">${leave.from_hour} - ${leave.to_hour}</span>
+                    </div>
+                    ` : ''}
+                    <div class="leave-card-detail">
+                        <span class="leave-card-label">Status:</span>
+                        <span class="leave-card-status ${statusClass}">${leave.status}</span>
+                    </div>
+                </div>
+                <button class="details-button">View Details</button>
+            `;
+            
+            // Add click event to show details
+            card.querySelector('.details-button').addEventListener('click', (e) => {
+                e.stopPropagation();
+                showDetails(leave.id);
+            });
+            card.addEventListener('click', () => showDetails(leave.id));
+            return card;
+        }
+
+        function formatDisplayDate(dateString) {
+            const date = new Date(dateString);
+            return date.toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' });
+        }
+
+        function showDetails(id) {
+            const leave = cachedLeaves.find(l => l.id === id);
+            if (!leave) {
+                showPopup('Leave not found', false);
+                return;
+            }
+            const modalDetails = document.getElementById('modal-details');
+            modalDetails.innerHTML = '';
+            const statusClass = `status-${leave.status.toLowerCase()}`;
+            const card = document.createElement('div');
+            card.className = 'leave-card';
+            card.innerHTML = `
                 <h3 class="leave-card-title">${leave.name}</h3>
-                <p class="leave-card-type">${leave.leave_type}</p>
-            </div>
-        </div>
-        <div class="leave-card-details">
-            <div class="leave-card-detail">
-                <span class="leave-card-label">Period:</span>
-                <span class="leave-card-value">${formatDisplayDate(leave.from_date)} - ${formatDisplayDate(leave.to_date)}</span>
-            </div>
-            ${leave.from_hour && leave.to_hour ? `
-            <div class="leave-card-detail">
-                <span class="leave-card-label">Time:</span>
-                <span class="leave-card-value">${leave.from_hour} - ${leave.to_hour}</span>
-            </div>
-            ` : ''}
-            <div class="leave-card-detail">
-                <span class="leave-card-label">Status:</span>
-                <span class="leave-card-status ${statusClass}">${leave.status}</span>
-            </div>
-        </div>
-        <button class="details-button">View Details</button>
-    `;
-    
-    // Add click event to show details
-    card.querySelector('.details-button').addEventListener('click', (e) => {
-        e.stopPropagation();
-        showDetails(leave.id);
-    });
-    card.addEventListener('click', () => showDetails(leave.id));
-    return card;
-}
-
-function formatDisplayDate(dateString) {
-    const date = new Date(dateString);
-    return date.toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' });
-}
-
-function showDetails(id) {
-    const leave = cachedLeaves.find(l => l.id === id);
-    if (!leave) {
-        showPopup('Leave not found', false);
-        return;
-    }
-    const modalDetails = document.getElementById('modal-details');
-    modalDetails.innerHTML = '';
-    const statusClass = `status-${leave.status.toLowerCase()}`;
-    const card = document.createElement('div');
-    card.className = 'leave-card';
-    card.innerHTML = `
-        <h3 class="leave-card-title">${leave.name}</h3>
-        <p>Employee ID: ${leave.emp_id}</p>
-        <p>Email: ${leave.email}</p>
-        <p>Leave Type: ${leave.leave_type}</p>
-        <p>Period: ${formatDisplayDate(leave.from_date)} to ${formatDisplayDate(leave.to_date)}</p>
-        ${leave.from_hour && leave.to_hour ? `<p>Time: ${leave.from_hour} to ${leave.to_hour}</p>` : ''}
-        <p>Reason: ${leave.reason}</p>
-        <p>Status: <span class="leave-card-status ${statusClass}">${leave.status}</span></p>
-    `;
-    modalDetails.appendChild(card);
-    document.getElementById('modal').style.display = 'flex';
-}
-
-function loadCalendar() {
-    const daysContainer = document.getElementById('days');
-    const monthDisplay = document.getElementById('calendar-month');
-    const today = new Date();
-    const firstDayOfMonth = new Date(currentYear, currentMonth, 1).getDay();
-    const daysInMonth = new Date(currentYear, currentMonth + 1, 0).getDate();
-    const lastDayOfMonth = new Date(currentYear, currentMonth, daysInMonth).getDay();
-    const daysInLastMonth = new Date(currentYear, currentMonth, 0).getDate();
-
-    // Update month display
-    const monthNames = ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"];
-    monthDisplay.textContent = `${monthNames[currentMonth]} ${currentYear}`;
-
-    daysContainer.innerHTML = '';
-
-    // Add days from previous month
-    for (let i = firstDayOfMonth; i > 0; i--) {
-        const dayElement = document.createElement('div');
-        dayElement.className = 'day other-month';
-        dayElement.textContent = daysInLastMonth - i + 1;
-        daysContainer.appendChild(dayElement);
-    }
-
-    // Add days of current month
-    for (let day = 1; day <= daysInMonth; day++) {
-        const dayElement = document.createElement('div');
-        dayElement.className = 'day';
-        dayElement.textContent = day;
-
-        // Check if this day is today
-        if (day === today.getDate() && currentMonth === today.getMonth() && currentYear === today.getFullYear()) {
-            dayElement.classList.add('today');
-            dayElement.setAttribute('data-tooltip', 'Today');
+                <p>Employee ID: ${leave.emp_id}</p>
+                <p>Email: ${leave.email}</p>
+                <p>Leave Type: ${leave.leave_type}</p>
+                <p>Period: ${formatDisplayDate(leave.from_date)} to ${formatDisplayDate(leave.to_date)}</p>
+                ${leave.from_hour && leave.to_hour ? `<p>Time: ${leave.from_hour} to ${leave.to_hour}</p>` : ''}
+                <p>Reason: ${leave.reason}</p>
+                <p>Status: <span class="leave-card-status ${statusClass}">${leave.status}</span></p>
+            `;
+            modalDetails.appendChild(card);
+            document.getElementById('modal').style.display = 'flex';
         }
 
-        // Check if this day is a holiday
-        const monthHolidays = holidays[currentMonth + 1];
-        if (monthHolidays && monthHolidays[day]) {
-            dayElement.classList.add('holiday');
-            dayElement.setAttribute('data-tooltip', monthHolidays[day]);
+        function loadCalendar() {
+            const daysContainer = document.getElementById('days');
+            const monthDisplay = document.getElementById('calendar-month');
+            const today = new Date();
+            const firstDayOfMonth = new Date(currentYear, currentMonth, 1).getDay();
+            const daysInMonth = new Date(currentYear, currentMonth + 1, 0).getDate();
+            const lastDayOfMonth = new Date(currentYear, currentMonth, daysInMonth).getDay();
+            const daysInLastMonth = new Date(currentYear, currentMonth, 0).getDate();
+
+            // Update month display
+            const monthNames = ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"];
+            monthDisplay.textContent = `${monthNames[currentMonth]} ${currentYear}`;
+
+            daysContainer.innerHTML = '';
+
+            // Add days from previous month
+            for (let i = firstDayOfMonth; i > 0; i--) {
+                const dayElement = document.createElement('div');
+                dayElement.className = 'day other-month';
+                dayElement.textContent = daysInLastMonth - i + 1;
+                daysContainer.appendChild(dayElement);
+            }
+
+            // Add days of current month
+            for (let day = 1; day <= daysInMonth; day++) {
+                const dayElement = document.createElement('div');
+                dayElement.className = 'day';
+                dayElement.textContent = day;
+
+                // Check if this day is today
+                if (day === today.getDate() && currentMonth === today.getMonth() && currentYear === today.getFullYear()) {
+                    dayElement.classList.add('today');
+                    dayElement.setAttribute('data-tooltip', 'Today');
+                }
+
+                // Check if this day is a holiday
+                const monthHolidays = holidays[currentMonth + 1];
+                if (monthHolidays && monthHolidays[day]) {
+                    dayElement.classList.add('holiday');
+                    dayElement.setAttribute('data-tooltip', monthHolidays[day]);
+                }
+
+                // Check if this day has an approved leave using cached data
+                const leaveOnThisDay = cachedLeaves.find(l => {
+                    const leaveDate = new Date(l.from_date);
+                    const leaveEndDate = new Date(l.to_date);
+                    const currentDate = new Date(currentYear, currentMonth, day);
+                    return l.status === 'Approved' &&
+                           currentDate >= leaveDate &&
+                           currentDate <= leaveEndDate;
+                });
+
+                if (leaveOnThisDay) {
+                    dayElement.classList.add('leave');
+                    dayElement.setAttribute('data-tooltip', `Leave Type: ${leaveOnThisDay.leave_type}`);
+                }
+
+                daysContainer.appendChild(dayElement);
+            }
+
+            // Add days from next month
+            for (let i = 1; i <= (6 - lastDayOfMonth); i++) {
+                const dayElement = document.createElement('div');
+                dayElement.className = 'day other-month';
+                dayElement.textContent = i;
+                daysContainer.appendChild(dayElement);
+            }
         }
 
-        // Check if this day has an approved leave using cached data
-        const leaveOnThisDay = cachedLeaves.find(l => {
-            const leaveDate = new Date(l.from_date);
-            const leaveEndDate = new Date(l.to_date);
-            const currentDate = new Date(currentYear, currentMonth, day);
-            return l.status === 'Approved' &&
-                   currentDate >= leaveDate &&
-                   currentDate <= leaveEndDate;
-        });
+        // Holidays data
+        const holidays = {
+            1: { 1: "New Year's Day", 15: "Makar Sankranti", 26: "Republic Day" },
+            2: { 26: "Maha Shivaratri" },
+            3: { 14: "Holi" },
+            4: { 6: "Ram Navami", 18: "Good Friday" },
+            8: { 15: "Independence Day", 16: "Krishna Janmashtami", 27: "Ganesh Chaturthi" },
+            10: { 2: "Gandhi Jayanti", 2: "Dussehra", 21: "Diwali" },
+            12: { 25: "Christmas" }
+        };
 
-        if (leaveOnThisDay) {
-            dayElement.classList.add('leave');
-            dayElement.setAttribute('data-tooltip', `Leave Type: ${leaveOnThisDay.leave_type}`);
+        function showPopup(message, isSuccess) {
+            const popup = document.getElementById('popup-card');
+            popup.textContent = message;
+            popup.style.background = isSuccess
+                ? 'linear-gradient(135deg, #6a11cb, #2575fc)'
+                : 'linear-gradient(135deg, #ff6666, #ff9999)';
+            popup.classList.add('show');
+            setTimeout(() => {
+                popup.classList.remove('show');
+                popup.classList.add('hide');
+                setTimeout(() => {
+                    popup.classList.remove('hide');
+                }, 500);
+            }, 5000);
         }
-
-        daysContainer.appendChild(dayElement);
-    }
-
-    // Add days from next month
-    for (let i = 1; i <= (6 - lastDayOfMonth); i++) {
-        const dayElement = document.createElement('div');
-        dayElement.className = 'day other-month';
-        dayElement.textContent = i;
-        daysContainer.appendChild(dayElement);
-    }
-}
-
-// Holidays data
-const holidays = {
-    1: { 1: "New Year's Day", 15: "Makar Sankranti", 26: "Republic Day" },
-    2: { 26: "Maha Shivaratri" },
-    3: { 14: "Holi" },
-    4: { 6: "Ram Navami", 18: "Good Friday" },
-    8: { 15: "Independence Day", 16: "Krishna Janmashtami", 27: "Ganesh Chaturthi" },
-    10: { 2: "Gandhi Jayanti", 2: "Dussehra", 21: "Diwali" },
-    12: { 25: "Christmas" }
-};
-
-function showPopup(message, isSuccess) {
-    const popup = document.getElementById('popup-card');
-    popup.textContent = message;
-    popup.style.background = isSuccess
-        ? 'linear-gradient(135deg, #6a11cb, #2575fc)'
-        : 'linear-gradient(135deg, #ff6666, #ff9999)';
-    popup.classList.add('show');
-    setTimeout(() => {
-        popup.classList.remove('show');
-        popup.classList.add('hide');
-        setTimeout(() => {
-            popup.classList.remove('hide');
-        }, 500);
-    }, 5000);
-}
     </script>
 </body>
 </html>

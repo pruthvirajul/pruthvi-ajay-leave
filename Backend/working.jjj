@@ -1,6 +1,7 @@
 const express = require('express');
 const { Pool } = require('pg');
 const cors = require('cors');
+const pathToRegexp = require('path-to-regexp');
 const app = express();
 const port = process.env.PORT || 3413;
 const host = process.env.HOST || '0.0.0.0';
@@ -85,7 +86,7 @@ async function initializeDatabase() {
           status VARCHAR(20) DEFAULT 'Pending',
           created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
           CONSTRAINT valid_emp_id CHECK (emp_id ~ '^[A-Z]{3}0[0-9]{3}$'),
-          CONSTRAINT valid_email CHECK (email ~ '^[a-zA-Z0-9._%+-]+@astrolitetech\\.com$')
+          CONSTRAINT valid_email CHECK (email ~ '^[a-zA-Z0-9._%+-]+@[a-zA-Z]{2,15}\\.[a-zA-Z]{2,3}$')
         );
       `);
       console.log('Database table "leaves" initialized successfully');
@@ -105,9 +106,9 @@ async function initializeDatabase() {
 // Validation functions
 const validators = {
   empId: (emp_id) => /^[A-Z]{3}0[0-9]{3}$/.test(emp_id),
-  email: (email) => /^[a-zA-Z0-9._%+-]+@astrolitetech\.com$/.test(email),
+  email: (email) => /^[a-zA-Z0-9._%+-]+@[a-zA-Z]{2,15}\.[a-zA-Z]{2,3}$/.test(email),
   name: (name) => /^[A-Za-z]+(?:\.[A-Za-z]+)*(?: [A-Za-z]+)*(?:\.[A-Za-z]+){0,3}$/.test(name),
-  leaveType: (type) => ['sick', 'casual', 'earned', 'paternity', 'maternity', 'marriage'].includes(type),
+  leaveType: (type) => ['sick', 'casual', 'earned'].includes(type),
   dates: (from_date, to_date) => {
     const today = new Date();
     const threeMonthsAgo = new Date();
@@ -194,18 +195,6 @@ app.post('/api/leaves', async (req, res) => {
       return res.status(400).json({ error: 'Reason must be between 5 and 100 characters' });
     }
 
-    // Check for overlapping approved leaves
-    const overlapCheck = await pool.query(
-      `SELECT * FROM leaves 
-       WHERE emp_id = $1 AND status = 'Approved' 
-       AND NOT (to_date < $2 OR from_date > $3)`,
-      [emp_id, from_date, to_date]
-    );
-
-    if (overlapCheck.rows.length > 0) {
-      return res.status(400).json({ error: 'Leave request overlaps with an existing approved leave' });
-    }
-
     const result = await pool.query(
       `INSERT INTO leaves (emp_id, name, email, leave_type, from_date, to_date, from_hour, to_hour, reason)
        VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9) RETURNING *`,
@@ -290,21 +279,27 @@ app.get('/api/leave-stats/:emp_id', async (req, res) => {
       return res.status(400).json({ error: 'Invalid Employee ID format' });
     }
 
-    // Calculate total approved leave days
-    const leaveDaysResult = await pool.query(
-      `SELECT SUM(to_date - from_date + 1) as total_days
-       FROM leaves 
+    const allocatedLeaves = 30; // This could come from another table
+    const result = await pool.query(
+      `SELECT from_date, to_date FROM leaves 
        WHERE emp_id = $1 AND status = 'Approved'`,
       [emp_id]
     );
 
-    const totalLeaveDays = leaveDaysResult.rows[0].total_days || 0;
-    const allocatedLeaves = 45; // Set allocated leaves to 45
-    const remainingLeaves = allocatedLeaves - totalLeaveDays;
+    let usedLeaves = 0;
+    result.rows.forEach(leave => {
+      const fromDate = new Date(leave.from_date);
+      const toDate = new Date(leave.to_date);
+      const days = Math.ceil((toDate - fromDate) / (1000 * 60 * 60 * 24)) + 1;
+      usedLeaves += days;
+    });
 
-    res.json({
-      allocatedLeaves,
-      remainingLeaves: remainingLeaves >= 0 ? remainingLeaves : 0
+    const remainingLeaves = allocatedLeaves - usedLeaves;
+    res.json({ 
+      allocatedLeaves, 
+      usedLeaves, 
+      remainingLeaves,
+      utilizationPercentage: (usedLeaves / allocatedLeaves * 100).toFixed(2)
     });
   } catch (error) {
     console.error('Error fetching leave stats:', error);
@@ -312,13 +307,34 @@ app.get('/api/leave-stats/:emp_id', async (req, res) => {
   }
 });
 
-// Start server
+// Error handling middleware
+app.use((err, req, res, next) => {
+  console.error('Global error handler:', err);
+  res.status(500).json({ 
+    error: 'Internal server error',
+    message: err.message,
+    stack: process.env.NODE_ENV === 'development' ? err.stack : undefined
+  });
+});
+
+// 404 handler
+app.use((req, res) => {
+  res.status(404).json({ error: 'Endpoint not found' });
+});
+
+// Server startup with retry logic
 async function startServer() {
   try {
-    await checkDatabaseConnection();
     await initializeDatabase();
     app.listen(port, host, () => {
-      console.log(`Server running at http://${host}:${port}`);
+      console.log(`Server running on http://${host}:${port}`);
+      console.log(`API Documentation:
+  - POST /api/leaves - Submit new leave request
+  - GET /api/leaves - Get all leaves (optional ?status= filter)
+  - GET /api/leaves/:emp_id - Get leaves for specific employee
+  - PUT /api/leaves/:id - Update leave status
+  - GET /api/leave-stats/:emp_id - Get leave statistics
+  - GET /api/health - Health check endpoint`);
     });
   } catch (error) {
     console.error('Failed to start server:', error);
@@ -326,13 +342,22 @@ async function startServer() {
   }
 }
 
+// Start the server
 startServer();
 
-// Error handling for uncaught exceptions
-process.on('uncaughtException', (error) => {
-  console.error('Uncaught Exception:', error);
+// Handle process termination
+process.on('SIGTERM', () => {
+  console.log('SIGTERM received. Shutting down gracefully...');
+  pool.end(() => {
+    console.log('Database pool closed');
+    process.exit(0);
+  });
 });
 
-process.on('unhandledRejection', (reason, promise) => {
-  console.error('Unhandled Rejection at:', promise, 'reason:', reason);
+process.on('SIGINT', () => {
+  console.log('SIGINT received. Shutting down gracefully...');
+  pool.end(() => {
+    console.log('Database pool closed');
+    process.exit(0);
+  });
 });
