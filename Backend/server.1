@@ -9,12 +9,12 @@ const pool = new Pool({
     user: 'postgres',
     host: 'postgres',
     database: 'new_employee_db',
-    password: 'admin123',
+    password: 'admin321',
     port: 5432,
 });
 
 app.use(cors({
-    origin: ['http://54.166.206.245:5500', 'http://127.0.0.1:5500']
+    origin: ['http://16.171.249.150:5500', 'http://16.171.249.150:5500']
 }));
 app.use(express.json());
 
