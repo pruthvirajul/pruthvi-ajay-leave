@@ -9,7 +9,7 @@ services:
       - "5413:5432"
     environment:
       POSTGRES_USER: postgres
-      POSTGRES_PASSWORD: admin123
+      POSTGRES_PASSWORD: admin321
       POSTGRES_DB: new_employee_db
     volumes:
       - pgdata:/var/lib/postgresql/data
@@ -25,7 +25,7 @@ services:
       - postgres
     environment:
       PGUSER: postgres
-      PGPASSWORD: admin123
+      PGPASSWORD: admin321
       PGHOST: postgres
       PGPORT: 5432
       PGDATABASE: new_employee_db
